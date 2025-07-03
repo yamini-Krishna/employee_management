@@ -8,6 +8,7 @@ from typing import Dict
 from dataclasses import dataclass
 import logging
 
+DATABASE_URL = os.getenv('DATABASE_URL')
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,

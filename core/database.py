@@ -1,4 +1,3 @@
-
 """
 Database connection handler with connection pooling
 """
@@ -8,7 +7,8 @@ from psycopg2 import pool
 from contextlib import contextmanager
 from typing import Generator
 import logging
-from config.config import db_config
+import os
+from config.config import db_config, DATABASE_URL
 
 logger = logging.getLogger(__name__)
 
@@ -26,16 +26,24 @@ class DatabasePool:
     def _initialize_pool(self):
         """Initialize the connection pool"""
         try:
-            self._pool = psycopg2.pool.SimpleConnectionPool(
-                minconn=1,
-                maxconn=10,
-                host=db_config.host,
-                port=db_config.port,
-                database=db_config.database,
-                user=db_config.user,
-                password=db_config.password
-            )
-            logger.info("Database connection pool initialized successfully")
+            if DATABASE_URL:
+                self._pool = psycopg2.pool.SimpleConnectionPool(
+                    minconn=1,
+                    maxconn=10,
+                    dsn=DATABASE_URL
+                )
+                logger.info("Database connection pool initialized using DATABASE_URL")
+            else:
+                self._pool = psycopg2.pool.SimpleConnectionPool(
+                    minconn=1,
+                    maxconn=10,
+                    host=db_config.host,
+                    port=db_config.port,
+                    database=db_config.database,
+                    user=db_config.user,
+                    password=db_config.password
+                )
+                logger.info("Database connection pool initialized using config values")
         except Exception as e:
             logger.error(f"Failed to initialize database pool: {e}")
             raise

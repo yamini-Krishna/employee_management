@@ -2,10 +2,10 @@
 Database models and table creation
 """
 
-from database import db_pool
+from core.database import db_pool
 import logging
-from tables import DatabaseTableCreator
-from config import db_config
+from core.tables import DatabaseTableCreator
+from config.config import db_config
 
 logger = logging.getLogger(__name__)
 

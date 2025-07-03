@@ -7,7 +7,7 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.units import inch
-from employee_master import show_employee_master_report
+from pages.employee_master import show_employee_master_report
 import plotly.express as px
 import plotly.graph_objects as go
 

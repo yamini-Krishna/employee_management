@@ -2,8 +2,8 @@
 import streamlit as st
 import pandas as pd
 from pathlib import Path
-from etl import ETLPipeline
-from config import etl_config, app_config
+from core.etl import ETLPipeline
+from config.config import etl_config, app_config
 from logs.activity_logger import get_logger
 
 def render_file_upload(db_pool):

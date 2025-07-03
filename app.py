@@ -12,18 +12,18 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 import sys
-from summary_reports import render_summary_reports
-from query_assistant import render_ai_query_assistant
+from pages.summary_reports import render_summary_reports
+from pages.query_assistant import render_ai_query_assistant
 from sqlalchemy import create_engine
 from urllib.parse import quote_plus
-from tasks_summariser import task_summarizer
-from custom_queries import render_custom_queries
-from file_upload import render_file_upload
-from report import render_standard_reports
+from pages.tasks_summariser import task_summarizer
+from pages.custom_queries import render_custom_queries
+from pages.file_upload import render_file_upload
+from pages.report import render_standard_reports
 from logs.activity_log_view import render_activity_logs
 from logs.activity_logger import get_logger
-from allocations import render_allocations
-from auth import AuthManager
+from pages.allocations import render_allocations
+from auth.auth import AuthManager
 
 # Load environment variables
 load_dotenv()
@@ -50,7 +50,7 @@ engine = create_engine(DATABASE_URL)
 activity_logger = get_logger(engine)
 
 # Import configurations
-from config import app_config, etl_config, db_config
+from config.config import app_config, etl_config, db_config
 
 # Set page config first
 st.set_page_config(
@@ -63,9 +63,9 @@ st.set_page_config(
 # Configure logging
 logger = logging.getLogger(__name__)
 
-from database import db_pool
-from etl import ETLPipeline
-from models import create_tables
+from core.database import db_pool
+from core.etl import ETLPipeline
+from core.models import create_tables
 
 # Add the get_available_tables function
 def get_available_tables():

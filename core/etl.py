@@ -11,10 +11,10 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from psycopg2.extras import execute_values
 
-from config import etl_config, app_config, FILE_SCHEMAS, DATA_TYPE_RULES, db_config
-from database import db_pool
-from models import create_tables
-from data_seeder import DatabaseSeeder2
+from config.config import etl_config, app_config, FILE_SCHEMAS, DATA_TYPE_RULES, db_config
+from core.database import db_pool
+from core.models import create_tables
+from core.data_seeder import DatabaseSeeder2
 
 logger = logging.getLogger(__name__)
 

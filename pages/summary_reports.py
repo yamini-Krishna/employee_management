@@ -4,7 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 import numpy as np
-from database import get_cursor
+from core.database import get_cursor
 
 def show_available_tables():
     """Helper function to show available tables"""

@@ -8,7 +8,7 @@ from psycopg2 import pool
 from contextlib import contextmanager
 from typing import Generator
 import logging
-from config import db_config
+from config.config import db_config
 
 logger = logging.getLogger(__name__)
 

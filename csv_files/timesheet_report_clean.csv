@@ -1,0 +1,560 @@
+timesheet_id,work_date,employee_code,project_id,hours_worked,task_description,allocation_id
+1,2023-01-16,EMP0001,PRJ001,6.4,Database schema design and optimization,1
+2,2023-01-17,EMP0001,PRJ002,1.6,Project planning and requirements gathering,1
+3,2023-01-18,EMP0001,PRJ001,6.4,Backend API development,1
+4,2023-01-19,EMP0001,PRJ002,1.6,Technical documentation review,1
+5,2023-01-20,EMP0001,PRJ001,6.4,Unit testing and code review,1
+6,2023-07-03,EMP0001,PRJ002,1.6,Sprint planning and backlog grooming,2
+7,2023-07-04,EMP0001,PRJ001,6.4,Performance optimization,2
+8,2023-07-05,EMP0001,PRJ002,1.6,User story refinement,2
+9,2023-07-06,EMP0001,PRJ001,6.4,Integration testing,2
+10,2023-07-07,EMP0001,PRJ002,1.6,Code deployment and monitoring,2
+11,2024-01-02,EMP0001,PRJ001,4.8,Microservices architecture design,3
+12,2024-01-03,EMP0001,PRJ001,4.8,API gateway implementation,3
+13,2024-01-04,EMP0001,PRJ001,4.8,Security layer enhancement,3
+14,2024-01-05,EMP0001,PRJ001,4.8,Load balancing configuration,3
+15,2024-01-08,EMP0001,PRJ001,4.8,Database migration planning,3
+16,2023-02-02,EMP0002,PRJ001,8.0,Frontend component development,4
+17,2023-02-03,EMP0002,PRJ001,8.0,User interface design implementation,4
+18,2023-02-06,EMP0002,PRJ001,8.0,Responsive design testing,4
+19,2023-02-07,EMP0002,PRJ001,8.0,Cross-browser compatibility fixes,4
+20,2023-02-08,EMP0002,PRJ001,8.0,User experience optimization,4
+21,2023-09-04,EMP0002,PRJ003,5.6,Data analytics dashboard development,5
+22,2023-09-05,EMP0002,PRJ003,5.6,Report generation functionality,5
+23,2023-09-06,EMP0002,PRJ003,5.6,Chart and visualization components,5
+24,2023-09-07,EMP0002,PRJ003,5.6,Real-time data streaming setup,5
+25,2023-09-08,EMP0002,PRJ003,5.6,Performance metrics implementation,5
+26,2024-04-02,EMP0002,PRJ003,4.0,Dashboard maintenance and bug fixes,6
+27,2024-04-03,EMP0002,PRJ003,4.0,New feature requirements analysis,6
+28,2024-04-04,EMP0002,PRJ003,4.0,User feedback integration,6
+29,2024-04-05,EMP0002,PRJ003,4.0,A/B testing implementation,6
+30,2024-04-08,EMP0002,PRJ003,4.0,Mobile responsiveness improvements,6
+31,2023-01-03,EMP0003,PRJ002,7.2,Project architecture and technical leadership,7
+32,2023-01-04,EMP0003,PRJ002,7.2,Team coordination and code reviews,7
+33,2023-01-05,EMP0003,PRJ002,7.2,Technical specifications documentation,7
+34,2023-01-06,EMP0003,PRJ002,7.2,Database design and modeling,7
+35,2023-01-09,EMP0003,PRJ002,7.2,Security implementation planning,7
+36,2023-07-03,EMP0003,PRJ004,3.2,Cross-project collaboration,8
+37,2023-07-04,EMP0003,PRJ004,3.2,Knowledge transfer sessions,8
+38,2023-07-05,EMP0003,PRJ004,3.2,Code quality assessments,8
+39,2023-07-06,EMP0003,PRJ004,3.2,Technical mentoring,8
+40,2023-07-07,EMP0003,PRJ004,3.2,Best practices documentation,8
+41,2024-01-02,EMP0003,PRJ004,5.6,Advanced feature development,9
+42,2024-01-03,EMP0003,PRJ004,5.6,System integration testing,9
+43,2024-01-04,EMP0003,PRJ004,5.6,Performance optimization,9
+44,2024-01-05,EMP0003,PRJ004,5.6,Technical debt resolution,9
+45,2024-01-08,EMP0003,PRJ004,5.6,Architecture refactoring,9
+46,2023-02-16,EMP0004,PRJ002,4.8,Feature development and testing,10
+47,2023-02-17,EMP0004,PRJ002,4.8,Bug fixing and code optimization,10
+48,2023-02-20,EMP0004,PRJ002,4.8,User acceptance testing support,10
+49,2023-02-21,EMP0004,PRJ002,4.8,Documentation updates,10
+50,2023-02-22,EMP0004,PRJ002,4.8,Release preparation activities,10
+51,2023-09-04,EMP0004,PRJ005,6.4,Project leadership and planning,11
+52,2023-09-05,EMP0004,PRJ005,6.4,Resource allocation and scheduling,11
+53,2023-09-06,EMP0004,PRJ005,6.4,Stakeholder communication,11
+54,2023-09-07,EMP0004,PRJ005,6.4,Risk assessment and mitigation,11
+55,2023-09-08,EMP0004,PRJ005,6.4,Quality assurance oversight,11
+56,2024-03-04,EMP0004,PRJ005,4.0,Project maintenance and support,12
+57,2024-03-05,EMP0004,PRJ005,4.0,Client requirements analysis,12
+58,2024-03-06,EMP0004,PRJ005,4.0,Change request evaluation,12
+59,2024-03-07,EMP0004,PRJ005,4.0,Team performance monitoring,12
+60,2024-03-08,EMP0004,PRJ005,4.0,Process improvement initiatives,12
+61,2023-03-02,EMP0005,PRJ003,8.0,Full-stack development work,13
+62,2023-03-03,EMP0005,PRJ003,8.0,Database integration and testing,13
+63,2023-03-06,EMP0005,PRJ003,8.0,API development and documentation,13
+64,2023-03-07,EMP0005,PRJ003,8.0,Frontend component creation,13
+65,2023-03-08,EMP0005,PRJ003,8.0,System deployment and monitoring,13
+66,2023-10-02,EMP0005,PRJ001,2.4,Technical support and maintenance,14
+67,2023-10-03,EMP0005,PRJ001,2.4,Bug investigation and fixes,14
+68,2023-10-04,EMP0005,PRJ001,2.4,Documentation updates,14
+69,2023-10-05,EMP0005,PRJ001,2.4,Code review and testing,14
+70,2023-10-06,EMP0005,PRJ001,2.4,User support and troubleshooting,14
+71,2024-05-02,EMP0005,PRJ002,3.2,Current assignment tasks,15
+72,2024-05-03,EMP0005,PRJ002,3.2,Feature enhancement work,15
+73,2024-05-06,EMP0005,PRJ002,3.2,Testing and validation,15
+74,2024-05-07,EMP0005,PRJ002,3.2,Documentation and reporting,15
+75,2024-05-08,EMP0005,PRJ002,3.2,Collaboration and meetings,15
+76,2023-01-03,EMP0006,PRJ004,5.6,Initial development tasks,16
+77,2023-01-04,EMP0006,PRJ004,5.6,Requirements analysis,16
+78,2023-01-05,EMP0006,PRJ004,5.6,System design and planning,16
+79,2023-01-06,EMP0006,PRJ004,5.6,Prototype development,16
+80,2023-01-09,EMP0006,PRJ004,5.6,Code implementation,16
+81,2023-08-02,EMP0006,PRJ005,4.8,Project transition activities,17
+82,2023-08-03,EMP0006,PRJ005,4.8,Knowledge transfer sessions,17
+83,2023-08-04,EMP0006,PRJ005,4.8,New codebase familiarization,17
+84,2023-08-07,EMP0006,PRJ005,4.8,Development environment setup,17
+85,2023-08-08,EMP0006,PRJ005,4.8,Initial feature development,17
+86,2024-02-02,EMP0006,PRJ003,6.4,Current project development,18
+87,2024-02-05,EMP0006,PRJ003,6.4,Feature implementation,18
+88,2024-02-06,EMP0006,PRJ003,6.4,Testing and debugging,18
+89,2024-02-07,EMP0006,PRJ003,6.4,Code optimization,18
+90,2024-02-08,EMP0006,PRJ003,6.4,Documentation and reviews,18
+91,2023-04-03,EMP0007,PRJ001,4.0,Team support activities,19
+92,2023-04-04,EMP0007,PRJ001,4.0,Development assistance,19
+93,2023-04-05,EMP0007,PRJ001,4.0,Testing support,19
+94,2023-04-06,EMP0007,PRJ001,4.0,Documentation help,19
+95,2023-04-07,EMP0007,PRJ001,4.0,Bug fixing support,19
+96,2023-11-02,EMP0007,PRJ002,7.2,Lead development work,20
+97,2023-11-03,EMP0007,PRJ002,7.2,Architecture decisions,20
+98,2023-11-06,EMP0007,PRJ002,7.2,Code reviews and mentoring,20
+99,2023-11-07,EMP0007,PRJ002,7.2,Technical problem solving,20
+100,2023-11-08,EMP0007,PRJ002,7.2,Sprint planning and execution,20
+101,2024-06-03,EMP0007,PRJ004,4.8,Technical leadership role,21
+102,2024-06-04,EMP0007,PRJ004,4.8,System architecture design,21
+103,2024-06-05,EMP0007,PRJ004,4.8,Team coordination,21
+104,2024-06-06,EMP0007,PRJ004,4.8,Code quality oversight,21
+105,2024-06-07,EMP0007,PRJ004,4.8,Performance optimization,21
+106,2023-01-03,EMP0008,PRJ005,8.0,Full-time project dedication,22
+107,2023-01-04,EMP0008,PRJ005,8.0,Core feature development,22
+108,2023-01-05,EMP0008,PRJ005,8.0,System integration work,22
+109,2023-01-06,EMP0008,PRJ005,8.0,Testing and validation,22
+110,2023-01-09,EMP0008,PRJ005,8.0,Documentation and deployment,22
+111,2023-09-04,EMP0008,PRJ003,3.2,Part-time support tasks,23
+112,2023-09-05,EMP0008,PRJ003,3.2,Bug fixes and maintenance,23
+113,2023-09-06,EMP0008,PRJ003,3.2,User support activities,23
+114,2023-09-07,EMP0008,PRJ003,3.2,System monitoring,23
+115,2023-09-08,EMP0008,PRJ003,3.2,Documentation updates,23
+116,2024-04-02,EMP0008,PRJ001,5.6,Primary development work,24
+117,2024-04-03,EMP0008,PRJ001,5.6,Feature implementation,24
+118,2024-04-04,EMP0008,PRJ001,5.6,Code optimization,24
+119,2024-04-05,EMP0008,PRJ001,5.6,Testing and debugging,24
+120,2024-04-08,EMP0008,PRJ001,5.6,Performance improvements,24
+121,2023-02-02,EMP0009,PRJ002,6.4,Core team development,25
+122,2023-02-03,EMP0009,PRJ002,6.4,Sprint deliverables,25
+123,2023-02-06,EMP0009,PRJ002,6.4,Feature testing,25
+124,2023-02-07,EMP0009,PRJ002,6.4,Code reviews,25
+125,2023-02-08,EMP0009,PRJ002,6.4,Team collaboration,25
+126,2023-10-02,EMP0009,PRJ004,4.0,Cross-functional tasks,26
+127,2023-10-03,EMP0009,PRJ004,4.0,Integration work,26
+128,2023-10-04,EMP0009,PRJ004,4.0,Knowledge sharing,26
+129,2023-10-05,EMP0009,PRJ004,4.0,Process improvement,26
+130,2023-10-06,EMP0009,PRJ004,4.0,Quality assurance,26
+131,2024-05-02,EMP0009,PRJ005,7.2,Leadership responsibilities,27
+132,2024-05-03,EMP0009,PRJ005,7.2,Strategic planning,27
+133,2024-05-06,EMP0009,PRJ005,7.2,Team management,27
+134,2024-05-07,EMP0009,PRJ005,7.2,Technical oversight,27
+135,2024-05-08,EMP0009,PRJ005,7.2,Stakeholder communication,27
+136,2023-03-16,EMP0010,PRJ003,4.8,Specialist consulting work,28
+137,2023-03-17,EMP0010,PRJ003,4.8,Technical analysis,28
+138,2023-03-20,EMP0010,PRJ003,4.8,Solution design,28
+139,2023-03-21,EMP0010,PRJ003,4.8,Implementation guidance,28
+140,2023-03-22,EMP0010,PRJ003,4.8,Quality reviews,28
+141,2023-12-04,EMP0010,PRJ001,3.2,Additional support tasks,29
+142,2023-12-05,EMP0010,PRJ001,3.2,Maintenance work,29
+143,2023-12-06,EMP0010,PRJ001,3.2,Bug investigation,29
+144,2023-12-07,EMP0010,PRJ001,3.2,Documentation updates,29
+145,2023-12-08,EMP0010,PRJ001,3.2,Testing support,29
+146,2024-07-02,EMP0010,PRJ002,6.4,Primary focus activities,30
+147,2024-07-03,EMP0010,PRJ002,6.4,Development work,30
+148,2024-07-04,EMP0010,PRJ002,6.4,Feature enhancement,30
+149,2024-07-05,EMP0010,PRJ002,6.4,Testing and validation,30
+150,2024-07-08,EMP0010,PRJ002,6.4,Code optimization,30
+151,2023-05-02,EMP0011,PRJ004,8.0,Dedicated resource work,31
+152,2023-05-03,EMP0011,PRJ004,8.0,Full project commitment,31
+153,2023-05-04,EMP0011,PRJ004,8.0,Core development tasks,31
+154,2023-05-05,EMP0011,PRJ004,8.0,System integration,31
+155,2023-05-08,EMP0011,PRJ004,8.0,Testing and deployment,31
+156,2024-02-02,EMP0011,PRJ005,5.6,Current assignment work,32
+157,2024-02-05,EMP0011,PRJ005,5.6,Feature development,32
+158,2024-02-06,EMP0011,PRJ005,5.6,Code reviews,32
+159,2024-02-07,EMP0011,PRJ005,5.6,Documentation,32
+160,2024-02-08,EMP0011,PRJ005,5.6,Team collaboration,32
+161,2023-01-03,EMP0012,PRJ001,7.2,Project leadership tasks,33
+162,2023-01-04,EMP0012,PRJ001,7.2,Technical direction,33
+163,2023-01-05,EMP0012,PRJ001,7.2,Team coordination,33
+164,2023-01-06,EMP0012,PRJ001,7.2,Architecture decisions,33
+165,2023-01-09,EMP0012,PRJ001,7.2,Quality oversight,33
+166,2023-09-04,EMP0012,PRJ003,4.0,Consulting activities,34
+167,2023-09-05,EMP0012,PRJ003,4.0,Expert advice,34
+168,2023-09-06,EMP0012,PRJ003,4.0,Technical guidance,34
+169,2023-09-07,EMP0012,PRJ003,4.0,Best practices sharing,34
+170,2023-09-08,EMP0012,PRJ003,4.0,Knowledge transfer,34
+171,2024-04-02,EMP0012,PRJ004,4.8,Technical expertise,35
+172,2024-04-03,EMP0012,PRJ004,4.8,Complex problem solving,35
+173,2024-04-04,EMP0012,PRJ004,4.8,Advanced development,35
+174,2024-04-05,EMP0012,PRJ004,4.8,System optimization,35
+175,2024-04-08,EMP0012,PRJ004,4.8,Performance tuning,35
+176,2023-06-02,EMP0013,PRJ002,5.6,Development role tasks,36
+177,2023-06-05,EMP0013,PRJ002,5.6,Feature implementation,36
+178,2023-06-06,EMP0013,PRJ002,5.6,Code testing,36
+179,2023-06-07,EMP0013,PRJ002,5.6,Bug fixing,36
+180,2023-06-08,EMP0013,PRJ002,5.6,Documentation work,36
+181,2024-03-04,EMP0013,PRJ005,6.4,Lead development work,37
+182,2024-03-05,EMP0013,PRJ005,6.4,Technical leadership,37
+183,2024-03-06,EMP0013,PRJ005,6.4,Code architecture,37
+184,2024-03-07,EMP0013,PRJ005,6.4,Team mentoring,37
+185,2024-03-08,EMP0013,PRJ005,6.4,Quality assurance,37
+186,2023-02-16,EMP0014,PRJ003,6.4,Analyst responsibilities,38
+187,2023-02-17,EMP0014,PRJ003,6.4,Data analysis,38
+188,2023-02-20,EMP0014,PRJ003,6.4,Report generation,38
+189,2023-02-21,EMP0014,PRJ003,6.4,Requirements analysis,38
+190,2023-02-22,EMP0014,PRJ003,6.4,Documentation tasks,38
+191,2023-11-02,EMP0014,PRJ001,4.8,Support analyst work,39
+192,2023-11-03,EMP0014,PRJ001,4.8,System analysis,39
+193,2023-11-06,EMP0014,PRJ001,4.8,User requirements,39
+194,2023-11-07,EMP0014,PRJ001,4.8,Process documentation,39
+195,2023-11-08,EMP0014,PRJ001,4.8,Testing support,39
+196,2024-06-03,EMP0014,PRJ004,4.0,Business analysis tasks,40
+197,2024-06-04,EMP0014,PRJ004,4.0,Requirements gathering,40
+198,2024-06-05,EMP0014,PRJ004,4.0,Stakeholder meetings,40
+199,2024-06-06,EMP0014,PRJ004,4.0,Process mapping,40
+200,2024-06-07,EMP0014,PRJ004,4.0,Documentation updates,40
+201,2023-04-03,EMP0015,PRJ005,7.2,Senior development work,41
+202,2023-04-04,EMP0015,PRJ005,7.2,Complex feature implementation,41
+203,2023-04-05,EMP0015,PRJ005,7.2,Architecture design,41
+204,2023-04-06,EMP0015,PRJ005,7.2,Code reviews and mentoring,41
+205,2023-04-07,EMP0015,PRJ005,7.2,Performance optimization,41
+206,2024-01-02,EMP0015,PRJ002,3.2,Maintenance activities,42
+207,2024-01-03,EMP0015,PRJ002,3.2,Bug fixes,42
+208,2024-01-04,EMP0015,PRJ002,3.2,System monitoring,42
+209,2024-01-05,EMP0015,PRJ002,3.2,User support,42
+210,2024-01-08,EMP0015,PRJ002,3.2,Documentation updates,42
+211,2023-07-03,EMP0016,PRJ001,4.0,Junior development tasks,43
+212,2023-07-04,EMP0016,PRJ001,4.0,Learning and practice,43
+213,2023-07-05,EMP0016,PRJ001,4.0,Code implementation,43
+214,2023-07-06,EMP0016,PRJ001,4.0,Testing and debugging,43
+215,2023-07-07,EMP0016,PRJ001,4.0,Documentation work,43
+216,2024-02-02,EMP0016,PRJ003,5.6,Growing responsibility tasks,44
+217,2024-02-05,EMP0016,PRJ003,5.6,Feature development,44
+218,2024-02-06,EMP0016,PRJ003,5.6,Code quality improvement,44
+219,2024-02-07,EMP0016,PRJ003,5.6,Testing procedures,44
+220,2024-02-08,EMP0016,PRJ003,5.6,Team collaboration,44
+221,2023-03-02,EMP0017,PRJ004,6.4,UI/UX specialist work,45
+222,2023-03-03,EMP0017,PRJ004,6.4,Interface design,45
+223,2023-03-06,EMP0017,PRJ004,6.4,User experience optimization,45
+224,2023-03-07,EMP0017,PRJ004,6.4,Prototype development,45
+225,2023-03-08,EMP0017,PRJ004,6.4,Usability testing,45
+226,2024-01-02,EMP0017,PRJ005,4.8,Design leadership,46
+227,2024-01-03,EMP0017,PRJ005,4.8,Creative direction,46
+228,2024-01-04,EMP0017,PRJ005,4.8,Design system development,46
+229,2024-01-05,EMP0017,PRJ005,4.8,Team coordination,46
+230,2024-01-08,EMP0017,PRJ005,4.8,Quality assurance,46
+231,2023-08-02,EMP0018,PRJ002,8.0,Full stack development,47
+232,2023-08-03,EMP0018,PRJ002,8.0,End-to-end feature work,47
+233,2023-08-04,EMP0018,PRJ002,8.0,Database and frontend integration,47
+234,2023-08-07,EMP0018,PRJ002,8.0,API development,47
+235,2023-08-08,EMP0018,PRJ002,8.0,Testing and deployment,47
+236,2024-05-02,EMP0018,PRJ001,6.4,Senior development role,48
+237,2024-05-03,EMP0018,PRJ001,6.4,Technical leadership,48
+238,2024-05-06,EMP0018,PRJ001,6.4,Code architecture,48
+239,2024-05-07,EMP0018,PRJ001,6.4,Performance optimization,48
+240,2024-05-08,EMP0018,PRJ001,6.4,Team mentoring,48
+241,2023-01-16,EMP0019,PRJ003,4.8,Database specialist work,49
+242,2023-01-17,EMP0019,PRJ003,4.8,Database design,49
+243,2023-01-18,EMP0019,PRJ003,4.8,Query optimization,49
+244,2023-01-19,EMP0019,PRJ003,4.8,Performance tuning,49
+245,2023-01-20,EMP0019,PRJ003,4.8,Data modeling,49
+246,2023-10-02,EMP0019,PRJ004,5.6,Data architecture work,50
+247,2023-10-03,EMP0019,PRJ004,5.6,System design,50
+248,2023-10-04,EMP0019,PRJ004,5.6,Data pipeline development,50
+249,2023-10-05,EMP0019,PRJ004,5.6,ETL processes,50
+250,2023-10-06,EMP0019,PRJ004,5.6,Data quality assurance,50
+251,2024-05-02,EMP0019,PRJ005,4.0,Data consulting work,51
+252,2024-05-03,EMP0019,PRJ005,4.0,Advisory services,51
+253,2024-05-06,EMP0019,PRJ005,4.0,Technical recommendations,51
+254,2024-05-07,EMP0019,PRJ005,4.0,Best practices guidance,51
+255,2024-05-08,EMP0019,PRJ005,4.0,Knowledge transfer,51
+256,2023-11-02,EMP0020,PRJ001,3.2,QA engineering tasks,52
+257,2023-11-03,EMP0020,PRJ001,3.2,Test case development,52
+258,2023-11-06,EMP0020,PRJ001,3.2,Manual testing,52
+259,2023-11-07,EMP0020,PRJ001,3.2,Bug reporting,52
+260,2023-11-08,EMP0020,PRJ001,3.2,Test documentation,52
+261,2024-08-02,EMP0020,PRJ002,7.2,QA leadership role,53
+262,2024-08-05,EMP0020,PRJ002,7.2,Test strategy development,53
+263,2024-08-06,EMP0020,PRJ002,7.2,Team coordination,53
+264,2024-08-07,EMP0020,PRJ002,7.2,Quality process improvement,53
+265,2024-08-08,EMP0020,PRJ002,7.2,Automation planning,53
+266,2023-06-02,EMP0021,PRJ004,7.2,DevOps engineering work,54
+267,2023-06-05,EMP0021,PRJ004,7.2,CI/CD pipeline setup,54
+268,2023-06-06,EMP0021,PRJ004,7.2,Infrastructure automation,54
+269,2023-06-07,EMP0021,PRJ004,7.2,Deployment optimization,54
+270,2023-06-08,EMP0021,PRJ004,7.2,Monitoring implementation,54
+271,2024-03-04,EMP0021,PRJ003,6.4,Infrastructure leadership,55
+272,2024-03-05,EMP0021,PRJ003,6.4,Cloud architecture,55
+273,2024-03-06,EMP0021,PRJ003,6.4,System scalability,55
+274,2024-03-07,EMP0021,PRJ003,6.4,Performance monitoring,55
+275,2024-03-08,EMP0021,PRJ003,6.4,Team technical guidance,55
+276,2023-01-03,EMP0022,PRJ005,5.6,Product management work,56
+277,2023-01-04,EMP0022,PRJ005,5.6,Roadmap planning,56
+278,2023-01-05,EMP0022,PRJ005,5.6,Stakeholder coordination,56
+279,2023-01-06,EMP0022,PRJ005,5.6,Requirements prioritization,56
+280,2023-01-09,EMP0022,PRJ005,5.6,User story creation,56
+281,2023-09-04,EMP0022,PRJ001,4.8,Product owner activities,57
+282,2023-09-05,EMP0022,PRJ001,4.8,Backlog management,57
+283,2023-09-06,EMP0022,PRJ001,4.8,Sprint planning,57
+284,2023-09-07,EMP0022,PRJ001,4.8,User acceptance criteria,57
+285,2023-09-08,EMP0022,PRJ001,4.8,Release coordination,57
+286,2023-01-13,EMP0022,PRJ005,5.6,Stakeholder meetings,56
+287,2023-09-01,EMP0022,PRJ001,4.8,Product owner activities,57
+293,2023-09-11,EMP0022,PRJ001,4.8,Product metrics review,57
+294,2023-09-12,EMP0022,PRJ001,4.8,User feedback analysis,57
+295,2023-09-13,EMP0022,PRJ001,4.8,Feature prioritization,57
+296,2023-09-14,EMP0022,PRJ001,4.8,Development team coordination,57
+297,2024-04-01,EMP0022,PRJ002,4.0,Product strategy development,58
+298,2024-04-02,EMP0022,PRJ002,4.0,Market positioning analysis,58
+299,2024-04-03,EMP0022,PRJ002,4.0,Strategic roadmap creation,58
+300,2024-04-04,EMP0022,PRJ002,4.0,Business case development,58
+301,2024-04-05,EMP0022,PRJ002,4.0,Stakeholder alignment,58
+302,2024-04-08,EMP0022,PRJ002,4.0,Go-to-market strategy,58
+303,2024-04-09,EMP0022,PRJ002,4.0,Product vision refinement,58
+304,2024-04-10,EMP0022,PRJ002,4.0,Strategic partnerships,58
+305,2024-04-11,EMP0022,PRJ002,4.0,Revenue model optimization,58
+306,2024-04-12,EMP0022,PRJ002,4.0,Portfolio management,58
+307,2023-05-15,EMP0023,PRJ003,4.0,Sprint facilitation,59
+308,2023-05-16,EMP0023,PRJ003,4.0,Daily standup coordination,59
+309,2023-05-17,EMP0023,PRJ003,4.0,Retrospective planning,59
+310,2023-05-18,EMP0023,PRJ003,4.0,Team coaching,59
+311,2023-05-19,EMP0023,PRJ003,4.0,Process improvement,59
+312,2023-05-22,EMP0023,PRJ003,4.0,Impediment removal,59
+313,2023-05-23,EMP0023,PRJ003,4.0,Scrum training,59
+314,2023-05-24,EMP0023,PRJ003,4.0,Agile metrics tracking,59
+315,2023-05-25,EMP0023,PRJ003,4.0,Cross-team coordination,59
+316,2023-05-26,EMP0023,PRJ003,4.0,Sprint review facilitation,59
+317,2024-02-01,EMP0023,PRJ004,3.2,Agile coaching sessions,60
+318,2024-02-02,EMP0023,PRJ004,3.2,Team maturity assessment,60
+319,2024-02-05,EMP0023,PRJ004,3.2,Process optimization,60
+320,2024-02-06,EMP0023,PRJ004,3.2,Leadership coaching,60
+321,2024-02-07,EMP0023,PRJ004,3.2,Organizational change support,60
+322,2024-02-08,EMP0023,PRJ004,3.2,Agile transformation,60
+323,2024-02-09,EMP0023,PRJ004,3.2,Best practices implementation,60
+324,2024-02-12,EMP0023,PRJ004,3.2,Training program development,60
+325,2024-02-13,EMP0023,PRJ004,3.2,Performance coaching,60
+326,2024-02-14,EMP0023,PRJ004,3.2,Team dynamics improvement,60
+327,2023-02-01,EMP0024,PRJ001,2.4,API documentation,61
+328,2023-02-02,EMP0024,PRJ001,2.4,User manual creation,61
+329,2023-02-03,EMP0024,PRJ001,2.4,Technical specification writing,61
+330,2023-02-06,EMP0024,PRJ001,2.4,Code documentation,61
+331,2023-02-07,EMP0024,PRJ001,2.4,Process documentation,61
+332,2023-02-08,EMP0024,PRJ001,2.4,Knowledge base updates,61
+333,2023-02-09,EMP0024,PRJ001,2.4,Training material creation,61
+334,2023-02-10,EMP0024,PRJ001,2.4,Documentation review,61
+335,2023-02-13,EMP0024,PRJ001,2.4,Style guide development,61
+336,2023-02-14,EMP0024,PRJ001,2.4,Template creation,61
+337,2023-11-01,EMP0024,PRJ005,5.6,Technical writing,62
+338,2023-11-02,EMP0024,PRJ005,5.6,Content architecture,62
+339,2023-11-03,EMP0024,PRJ005,5.6,User guide development,62
+340,2023-11-06,EMP0024,PRJ005,5.6,Help system design,62
+341,2023-11-07,EMP0024,PRJ005,5.6,Documentation standards,62
+342,2023-11-08,EMP0024,PRJ005,5.6,Content management,62
+343,2023-11-09,EMP0024,PRJ005,5.6,Technical editing,62
+344,2023-11-10,EMP0024,PRJ005,5.6,Information design,62
+345,2023-11-13,EMP0024,PRJ005,5.6,Content strategy,62
+346,2023-11-14,EMP0024,PRJ005,5.6,Documentation workflow,62
+347,2024-06-03,EMP0024,PRJ002,4.8,Content specialist activities,63
+348,2024-06-04,EMP0024,PRJ002,4.8,Content creation strategy,63
+349,2024-06-05,EMP0024,PRJ002,4.8,Editorial calendar management,63
+350,2024-06-06,EMP0024,PRJ002,4.8,Content optimization,63
+351,2024-06-07,EMP0024,PRJ002,4.8,SEO content development,63
+352,2024-06-10,EMP0024,PRJ002,4.8,Brand messaging alignment,63
+353,2024-06-11,EMP0024,PRJ002,4.8,Multi-channel content,63
+354,2024-06-12,EMP0024,PRJ002,4.8,Content performance analysis,63
+355,2024-06-13,EMP0024,PRJ002,4.8,Content governance,63
+356,2024-06-14,EMP0024,PRJ002,4.8,Digital asset management,63
+357,2023-09-01,EMP0025,PRJ004,6.4,Security assessment,64
+358,2023-09-04,EMP0025,PRJ004,6.4,Vulnerability testing,64
+359,2023-09-05,EMP0025,PRJ004,6.4,Security policy development,64
+360,2023-09-06,EMP0025,PRJ004,6.4,Penetration testing,64
+361,2023-09-07,EMP0025,PRJ004,6.4,Risk analysis,64
+362,2023-09-08,EMP0025,PRJ004,6.4,Compliance auditing,64
+363,2023-09-11,EMP0025,PRJ004,6.4,Security monitoring,64
+364,2023-09-12,EMP0025,PRJ004,6.4,Incident response planning,64
+365,2023-09-13,EMP0025,PRJ004,6.4,Security training,64
+366,2023-09-14,EMP0025,PRJ004,6.4,Threat modeling,64
+367,2024-06-03,EMP0025,PRJ003,7.2,Security leadership,65
+368,2024-06-04,EMP0025,PRJ003,7.2,Security architecture,65
+369,2024-06-05,EMP0025,PRJ003,7.2,Team management,65
+370,2024-06-06,EMP0025,PRJ003,7.2,Security strategy,65
+371,2024-06-07,EMP0025,PRJ003,7.2,Stakeholder coordination,65
+372,2024-06-10,EMP0025,PRJ003,7.2,Security governance,65
+373,2024-06-11,EMP0025,PRJ003,7.2,Risk management,65
+374,2024-06-12,EMP0025,PRJ003,7.2,Security program development,65
+375,2024-06-13,EMP0025,PRJ003,7.2,Vendor security assessment,65
+376,2024-06-14,EMP0025,PRJ003,7.2,Security metrics reporting,65
+377,2023-07-03,EMP0026,PRJ005,4.8,Performance testing,66
+378,2023-07-04,EMP0026,PRJ005,4.8,Load testing analysis,66
+379,2023-07-05,EMP0026,PRJ005,4.8,System benchmarking,66
+380,2023-07-06,EMP0026,PRJ005,4.8,Bottleneck identification,66
+381,2023-07-07,EMP0026,PRJ005,4.8,Performance metrics,66
+382,2023-07-10,EMP0026,PRJ005,4.8,Capacity planning,66
+383,2023-07-11,EMP0026,PRJ005,4.8,Performance monitoring,66
+384,2023-07-12,EMP0026,PRJ005,4.8,Optimization recommendations,66
+385,2023-07-13,EMP0026,PRJ005,4.8,Test script development,66
+386,2023-07-14,EMP0026,PRJ005,4.8,Performance reporting,66
+387,2024-04-01,EMP0026,PRJ001,4.0,System optimization,67
+388,2024-04-02,EMP0026,PRJ001,4.0,Performance tuning,67
+389,2024-04-03,EMP0026,PRJ001,4.0,Database optimization,67
+390,2024-04-04,EMP0026,PRJ001,4.0,Application profiling,67
+391,2024-04-05,EMP0026,PRJ001,4.0,Resource utilization analysis,67
+392,2024-04-08,EMP0026,PRJ001,4.0,Performance architecture,67
+393,2024-04-09,EMP0026,PRJ001,4.0,Scalability assessment,67
+394,2024-04-10,EMP0026,PRJ001,4.0,Infrastructure optimization,67
+395,2024-04-11,EMP0026,PRJ001,4.0,Cost optimization,67
+396,2024-04-12,EMP0026,PRJ001,4.0,Performance best practices,67
+397,2023-04-17,EMP0027,PRJ002,5.6,System integration,68
+398,2023-04-18,EMP0027,PRJ002,5.6,Integration testing,68
+399,2023-04-19,EMP0027,PRJ002,5.6,Interface development,68
+400,2023-04-20,EMP0027,PRJ002,5.6,Data mapping,68
+401,2023-04-21,EMP0027,PRJ002,5.6,Integration architecture,68
+402,2023-04-24,EMP0027,PRJ002,5.6,Middleware configuration,68
+403,2023-04-25,EMP0027,PRJ002,5.6,ETL development,68
+404,2023-04-26,EMP0027,PRJ002,5.6,Integration monitoring,68
+405,2023-04-27,EMP0027,PRJ002,5.6,Error handling,68
+406,2023-04-28,EMP0027,PRJ002,5.6,Performance optimization,68
+407,2024-01-02,EMP0027,PRJ004,6.4,API development,69
+408,2024-01-03,EMP0027,PRJ004,6.4,REST API design,69
+409,2024-01-04,EMP0027,PRJ004,6.4,API documentation,69
+410,2024-01-05,EMP0027,PRJ004,6.4,API testing,69
+411,2024-01-08,EMP0027,PRJ004,6.4,API security,69
+412,2024-01-09,EMP0027,PRJ004,6.4,Rate limiting implementation,69
+413,2024-01-10,EMP0027,PRJ004,6.4,API versioning,69
+414,2024-01-11,EMP0027,PRJ004,6.4,GraphQL development,69
+415,2024-01-12,EMP0027,PRJ004,6.4,API monitoring,69
+416,2024-01-15,EMP0027,PRJ004,6.4,Webhook implementation,69
+417,2023-08-01,EMP0028,PRJ003,3.2,Customer support,70
+418,2023-08-02,EMP0028,PRJ003,3.2,Issue troubleshooting,70
+419,2023-08-03,EMP0028,PRJ003,3.2,Bug investigation,70
+420,2023-08-04,EMP0028,PRJ003,3.2,User assistance,70
+421,2023-08-07,EMP0028,PRJ003,3.2,System monitoring,70
+422,2023-08-08,EMP0028,PRJ003,3.2,Support documentation,70
+423,2023-08-09,EMP0028,PRJ003,3.2,Escalation management,70
+424,2023-08-10,EMP0028,PRJ003,3.2,Knowledge base updates,70
+425,2023-08-11,EMP0028,PRJ003,3.2,Support metrics tracking,70
+426,2023-08-14,EMP0028,PRJ003,3.2,Customer feedback analysis,70
+427,2024-05-01,EMP0028,PRJ005,4.8,Maintenance leadership,71
+428,2024-05-02,EMP0028,PRJ005,4.8,System maintenance planning,71
+429,2024-05-03,EMP0028,PRJ005,4.8,Preventive maintenance,71
+430,2024-05-06,EMP0028,PRJ005,4.8,Maintenance team coordination,71
+431,2024-05-07,EMP0028,PRJ005,4.8,Maintenance scheduling,71
+432,2024-05-08,EMP0028,PRJ005,4.8,Service level management,71
+433,2024-05-09,EMP0028,PRJ005,4.8,Maintenance metrics,71
+434,2024-05-10,EMP0028,PRJ005,4.8,Change management,71
+435,2024-05-13,EMP0028,PRJ005,4.8,Asset management,71
+436,2024-05-14,EMP0028,PRJ005,4.8,Maintenance optimization,71
+437,2023-10-02,EMP0029,PRJ001,5.6,Mobile app development,72
+438,2023-10-03,EMP0029,PRJ001,5.6,iOS development,72
+439,2023-10-04,EMP0029,PRJ001,5.6,Android development,72
+440,2023-10-05,EMP0029,PRJ001,5.6,Mobile UI design,72
+441,2023-10-06,EMP0029,PRJ001,5.6,Mobile testing,72
+442,2023-10-09,EMP0029,PRJ001,5.6,Performance optimization,72
+443,2023-10-10,EMP0029,PRJ001,5.6,App store deployment,72
+444,2023-10-11,EMP0029,PRJ001,5.6,Mobile analytics,72
+445,2023-10-12,EMP0029,PRJ001,5.6,Cross-platform development,72
+446,2023-10-13,EMP0029,PRJ001,5.6,Mobile architecture,72
+447,2024-07-01,EMP0029,PRJ002,6.4,Mobile leadership,73
+448,2024-07-02,EMP0029,PRJ002,6.4,Mobile strategy,73
+449,2024-07-03,EMP0029,PRJ002,6.4,Team management,73
+450,2024-07-04,EMP0029,PRJ002,6.4,Mobile architecture,73
+451,2024-07-05,EMP0029,PRJ002,6.4,Technology roadmap,73
+452,2024-07-08,EMP0029,PRJ002,6.4,Best practices,73
+453,2024-07-09,EMP0029,PRJ002,6.4,Code review,73
+454,2024-07-10,EMP0029,PRJ002,6.4,Mobile platform strategy,73
+455,2024-07-11,EMP0029,PRJ002,6.4,Performance standards,73
+456,2024-07-12,EMP0029,PRJ002,6.4,Release management,73
+457,2023-01-02,EMP0030,PRJ004,4.0,Cloud infrastructure,74
+458,2023-01-03,EMP0030,PRJ004,4.0,AWS configuration,74
+459,2023-01-04,EMP0030,PRJ004,4.0,Cloud monitoring,74
+460,2023-01-05,EMP0030,PRJ004,4.0,Infrastructure automation,74
+461,2023-01-06,EMP0030,PRJ004,4.0,Cloud security,74
+462,2023-01-09,EMP0030,PRJ004,4.0,DevOps pipeline,74
+463,2023-01-10,EMP0030,PRJ004,4.0,Container orchestration,74
+464,2023-01-11,EMP0030,PRJ004,4.0,Cloud cost optimization,74
+465,2023-01-12,EMP0030,PRJ004,4.0,Disaster recovery,74
+466,2023-01-13,EMP0030,PRJ004,4.0,Cloud migration planning,74
+467,2023-10-02,EMP0030,PRJ003,7.2,Cloud architecture,75
+468,2023-10-03,EMP0030,PRJ003,7.2,Solutions design,75
+469,2023-10-04,EMP0030,PRJ003,7.2,Technical leadership,75
+470,2023-10-05,EMP0030,PRJ003,7.2,Cloud strategy,75
+471,2023-10-06,EMP0030,PRJ003,7.2,Enterprise architecture,75
+472,2023-10-09,EMP0030,PRJ003,7.2,Cloud governance,75
+473,2023-10-10,EMP0030,PRJ003,7.2,Architecture review,75
+474,2023-10-11,EMP0030,PRJ003,7.2,Cloud standards,75
+475,2023-10-12,EMP0030,PRJ003,7.2,Technology evaluation,75
+476,2023-10-13,EMP0030,PRJ003,7.2,Cloud transformation,75
+477,2024-05-01,EMP0030,PRJ005,5.6,Cloud specialization,76
+478,2024-05-02,EMP0030,PRJ005,5.6,Multi-cloud strategy,76
+479,2024-05-03,EMP0030,PRJ005,5.6,Cloud optimization,76
+480,2024-05-06,EMP0030,PRJ005,5.6,Platform engineering,76
+481,2024-05-07,EMP0030,PRJ005,5.6,Cloud automation,76
+482,2024-05-08,EMP0030,PRJ005,5.6,Infrastructure as Code,76
+483,2024-05-09,EMP0030,PRJ005,5.6,Cloud native development,76
+484,2024-05-10,EMP0030,PRJ005,5.6,Serverless architecture,76
+485,2024-05-13,EMP0030,PRJ005,5.6,Cloud performance,76
+486,2024-05-14,EMP0030,PRJ005,5.6,Cloud consulting,76
+487,2023-03-01,EMP0031,PRJ001,4.8,Database administration,77
+488,2023-03-02,EMP0031,PRJ001,4.8,Database monitoring,77
+489,2023-03-03,EMP0031,PRJ001,4.8,Performance tuning,77
+490,2023-03-06,EMP0031,PRJ001,4.8,Backup management,77
+491,2023-03-07,EMP0031,PRJ001,4.8,Database security,77
+492,2023-03-08,EMP0031,PRJ001,4.8,Query optimization,77
+493,2023-03-09,EMP0031,PRJ001,4.8,Database maintenance,77
+494,2023-03-10,EMP0031,PRJ001,4.8,Index management,77
+495,2023-03-13,EMP0031,PRJ001,4.8,Data integrity checks,77
+496,2023-03-14,EMP0031,PRJ001,4.8,Disaster recovery,77
+497,2023-12-01,EMP0031,PRJ004,6.4,Database architecture,78
+498,2023-12-04,EMP0031,PRJ004,6.4,Schema design,78
+499,2023-12-05,EMP0031,PRJ004,6.4,Data modeling,78
+500,2023-12-06,EMP0031,PRJ004,6.4,Database scalability,78
+501,2023-12-07,EMP0031,PRJ004,6.4,Data warehouse design,78
+502,2023-12-08,EMP0031,PRJ004,6.4,NoSQL architecture,78
+503,2023-12-11,EMP0031,PRJ004,6.4,Database migration,78
+504,2023-12-12,EMP0031,PRJ004,6.4,Data governance,78
+505,2023-12-13,EMP0031,PRJ004,6.4,Database standards,78
+506,2023-12-14,EMP0031,PRJ004,6.4,Performance architecture,78
+507,2023-05-15,EMP0032,PRJ002,4.0,Network configuration,79
+508,2023-05-16,EMP0032,PRJ002,4.0,Network monitoring,79
+509,2023-05-17,EMP0032,PRJ002,4.0,Router configuration,79
+510,2023-05-18,EMP0032,PRJ002,4.0,Switch management,79
+511,2023-05-19,EMP0032,PRJ002,4.0,Network security,79
+512,2023-05-22,EMP0032,PRJ002,4.0,Firewall management,79
+513,2023-05-23,EMP0032,PRJ002,4.0,VPN configuration,79
+514,2023-05-24,EMP0032,PRJ002,4.0,Network troubleshooting,79
+515,2023-05-25,EMP0032,PRJ002,4.0,Bandwidth optimization,79
+516,2023-05-26,EMP0032,PRJ002,4.0,Network documentation,79
+517,2024-02-01,EMP0032,PRJ005,5.6,Network specialization,80
+518,2024-02-02,EMP0032,PRJ005,5.6,Advanced networking,80
+519,2024-02-05,EMP0032,PRJ005,5.6,Network architecture,80
+520,2024-02-06,EMP0032,PRJ005,5.6,SD-WAN implementation,80
+521,2024-02-07,EMP0032,PRJ005,5.6,Network automation,80
+522,2024-02-08,EMP0032,PRJ005,5.6,Network analytics,80
+523,2024-02-09,EMP0032,PRJ005,5.6,Cloud networking,80
+524,2024-02-12,EMP0032,PRJ005,5.6,Network optimization,80
+525,2024-02-13,EMP0032,PRJ005,5.6,Network design,80
+526,2024-02-14,EMP0032,PRJ005,5.6,Infrastructure planning,80
+527,2023-06-01,EMP0033,PRJ003,7.2,Systems analysis,81
+528,2023-06-02,EMP0033,PRJ003,7.2,Requirements gathering,81
+529,2023-06-05,EMP0033,PRJ003,7.2,Process analysis,81
+530,2023-06-06,EMP0033,PRJ003,7.2,System design,81
+531,2023-06-07,EMP0033,PRJ003,7.2,Workflow optimization,81
+532,2023-06-08,EMP0033,PRJ003,7.2,Business process mapping,81
+533,2023-06-09,EMP0033,PRJ003,7.2,System integration planning,81
+534,2023-06-12,EMP0033,PRJ003,7.2,Technical documentation,81
+535,2023-06-13,EMP0033,PRJ003,7.2,Solution architecture,81
+536,2023-06-14,EMP0033,PRJ003,7.2,Change impact analysis,81
+537,2024-03-01,EMP0033,PRJ001,4.8,Business analysis,82
+538,2024-03-04,EMP0033,PRJ001,4.8,Stakeholder interviews,82
+539,2024-03-05,EMP0033,PRJ001,4.8,Process improvement,82
+540,2024-03-06,EMP0033,PRJ001,4.8,Business requirements,82
+541,2024-03-07,EMP0033,PRJ001,4.8,Gap analysis,82
+542,2024-03-08,EMP0033,PRJ001,4.8,Solution evaluation,82
+543,2024-03-11,EMP0033,PRJ001,4.8,Business case development,82
+544,2024-03-12,EMP0033,PRJ001,4.8,ROI analysis,82
+545,2024-03-13,EMP0033,PRJ001,4.8,Process documentation,82
+546,2024-03-14,EMP0033,PRJ001,4.8,Change management,82
+547,2023-02-15,EMP0034,PRJ004,3.2,UI design,83
+548,2023-02-16,EMP0034,PRJ004,3.2,Wireframe creation,83
+549,2023-02-17,EMP0034,PRJ004,3.2,Visual design,83
+550,2023-02-20,EMP0034,PRJ004,3.2,Design system,83
+551,2023-02-21,EMP0034,PRJ004,3.2,Prototyping,83
+552,2023-02-22,EMP0034,PRJ004,3.2,User interface testing,83
+553,2023-02-23,EMP0034,PRJ004,3.2,Design reviews,83
+554,2023-02-24,EMP0034,PRJ004,3.2,Asset creation,83
+555,2023-02-27,EMP0034,PRJ004,3.2,Brand alignment,83
+556,2023-02-28,EMP0034,PRJ004,3.2,Design documentation,83
+557,2023-11-01,EMP0034,PRJ002,6.4,UX design,84
+558,2023-11-02,EMP0034,PRJ002,6.4,User research,84
+559,2023-11-03,EMP0034,PRJ002,6.4,User journey mapping,84
+560,2023-11-06,EMP0034,PRJ002,6.4,Usability testing,84
+561,2023-11-07,EMP0034,PRJ002,6.4,Information architecture,84
+562,2023-11-08,EMP0034,PRJ002,6.4,Interaction design,84
+563,2023-11-09,EMP0034,PRJ002,6.4,Design thinking workshops,84
+564,2023-11-10,EMP0034,PRJ002,6.4,Persona development,84

@@ -1,112 +1,267 @@
 # Employee Management System
 
-A modular, extensible HR management system built with Python, Streamlit, PostgreSQL/SQLite, and SQLAlchemy. This project provides a comprehensive platform for managing employees, projects, timesheets, attendance, allocations, and more, with support for AI-powered summaries and custom queries.
+A comprehensive, AI-powered HR management platform built with Python, Streamlit, PostgreSQL/SQLite, and SQLAlchemy. Streamline your workforce management with intelligent automation and intuitive interfaces.
 
-## Features
+## 🚀 Quick Start
 
-- Employee master data management
-- Project and allocation tracking
-- Timesheet and attendance management
-- AI-powered task summaries
-- Custom SQL query assistant
-- File upload and ETL pipeline
-- Data validation and error logging
-- Modular Streamlit UI
-- PostgreSQL and SQLite support
 
-## Folder Structure
+```bash
+# Clone and navigate
+git clone https://github.com/yourusername/employee-management-system.git
+cd employee-management-system
 
-```
-employee_management/
-│
-├── core/           # Core backend logic (database, models, ETL, etc.)
-├── pages/          # Streamlit UI pages and components
-├── auth/           # Authentication logic
-├── config/         # Configuration files
-├── logs/           # Logging utilities and log files
-├── csv_files/      # Sample and uploaded CSVs
-├── data/           # Data files
-├── uploads/        # User uploads
-├── init_db/        # Database initialization scripts
-├── main.py         # Main entry point
-├── requirements.txt# Python dependencies
-├── .env            # Environment variables
-└── ...             # Other supporting files
+# Option 1: Docker (Recommended)
+docker-compose up --build
+
+# Option 2: Local Setup
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+streamlit run pages/app.py
 ```
 
-## Getting Started
+**Access the application:** http://localhost:8501
 
-### Prerequisites
-- Python 3.8+
-- pip
-- (Optional) Docker
-- PostgreSQL (or use SQLite for local testing)
+## 📋 Table of Contents
 
-### Installation
+- [Features](#-features)
+- [Prerequisites](#-prerequisites)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Usage](#-usage)
+- [AI Features Setup](#-ai-features-setup)
+- [Project Structure](#-project-structure)
+- [Troubleshooting](#-troubleshooting)
+
+
+## ✨ Features
+
+### Core HR Management
+- **Employee Master Data** - Complete employee profiles with personal and professional details
+- **Project Management** - Track projects, assignments, and deliverables
+- **Time Tracking** - Comprehensive timesheet and attendance management
+- **Resource Allocation** - Optimize employee-project assignments
+
+### Advanced Capabilities
+- **AI-Powered Analytics** - Intelligent task summaries and insights
+- **Custom Query Assistant** - Natural language to SQL conversion
+- **File Upload & ETL** - Bulk data import with validation
+- **Real-time Reporting** - Dynamic dashboards and analytics
+- **Audit Trail** - Complete change logging and error tracking
+
+### Technical Features
+- **Modular Architecture** - Clean, extensible codebase
+- **Multi-Database Support** - PostgreSQL for production, SQLite for development
+- **Responsive UI** - Modern Streamlit interface
+- **Docker Ready** - Containerized deployment
+
+## 🛠 Prerequisites
+
+- **Python 3.8+** (for local setup)
+- **Docker & Docker Compose** (for containerized setup)
+- **PostgreSQL** (optional - SQLite included for testing)
+- **Internet Connection** (for AI features)
+
+## 📦 Installation
+
+### Option 1: Docker Setup (Recommended)
 
 1. **Clone the repository:**
    ```bash
-   git clone <your-repo-url>
-   cd employee_management
+   git clone https://github.com/yourusername/employee-management-system.git
+   cd employee-management-system
    ```
 
-2. **Create and activate a virtual environment:**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Configure environment variables:**
-   - Copy `.env.example` to `.env` and update values as needed (database credentials, API keys, etc.)
-
-5. **Set up the database:**
-   - Edit `config/config.py` for your database settings.
-   - Run the table creation script:
-     ```bash
-     python core/tables.py
-     ```
-
-6. **(Optional) Seed initial data:**
-   ```bash
-   python core/data_seeder.py
-   ```
-
-### Running the Application
-
-- **Streamlit UI:**
-  ```bash
-  streamlit run pages/app.py
-  ```
-- **Main entry (if using FastAPI or other backend):**
-  ```bash
-  python main.py
-  ```
-
-### Using Docker
-
-1. Build and run the container:
+2. **Start the application:**
    ```bash
    docker-compose up --build
    ```
 
-## Contributing
+3. **Access the application:**
+   - **Web Interface:** http://localhost:8501
+   - **Database:** PostgreSQL on port 5432 (if using PostgreSQL)
 
-Contributions are welcome! Please fork the repo and submit a pull request.
+### Option 2: Local Development Setup
 
-## License
+1. **Clone and setup environment:**
+   ```bash
+   git clone https://github.com/yourusername/employee-management-system.git
+   cd employee-management-system
+   python -m venv venv
+   source venv/bin/activate  # Windows: venv\Scripts\activate
+   ```
 
-This project is licensed under the MIT License.
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## Acknowledgements
-- Streamlit
-- SQLAlchemy
-- PostgreSQL
-- OpenAI/Google Gemini (for AI features)
+3. **Configure environment:**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your database credentials and API keys
+   ```
 
----
-For questions or support, open an issue or contact the maintainer.
+4. **Initialize database:**
+   ```bash
+   python core/tables.py
+   python core/data_seeder.py  # Optional: Add sample data
+   ```
+
+5. **Run the application:**
+   ```bash
+   streamlit run pages/app.py
+   ```
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+# Database Configuration
+DATABASE_URL=sqlite:///employee_management.db
+# For PostgreSQL: postgresql://username:password@localhost:5432/employee_db
+
+# AI Features (Optional)
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Application Settings
+DEBUG=True
+LOG_LEVEL=INFO
+```
+
+### Database Setup
+
+**SQLite (Default):**
+- No additional setup required
+- Database file created automatically
+
+**PostgreSQL:**
+```bash
+# Create database
+createdb employee_management
+
+# Update DATABASE_URL in .env
+DATABASE_URL=postgresql://username:password@localhost:5432/employee_management
+```
+
+## 🤖 AI Features Setup
+
+### Gemini API Configuration
+
+1. **Get API Key:**
+   - Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
+   - Sign in with Google account
+   - Click "Create API key"
+   - Copy the generated key
+
+2. **Configure the application:**
+   ```bash
+   # Add to .env file
+   GEMINI_API_KEY=your_api_key_here
+   ```
+
+3. **Enable Generative Language API:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Enable "Generative Language API"
+
+4. **Test AI features:**
+   - Navigate to "🤖 AI Query Assistant"
+   - Try: "Show me all employees hired this year"
+   - The AI will generate and execute SQL queries
+
+### AI Features Available
+
+- **Smart Query Assistant** - Natural language to SQL
+- **Task Summaries** - AI-generated project insights
+
+
+## 📁 Project Structure
+
+```
+employee_management/
+│
+├── 🏗️ core/              # Backend Logic
+│   ├── database.py       # Database connections
+│   ├── models.py         # SQLAlchemy models
+│   ├── tables.py         # Table creation
+│   └── etl/              # Data processing
+│
+├── 🎨 pages/             # Streamlit UI
+│   ├── app.py           # Main application
+│   ├── employee_mgmt.py # Employee management
+│   └── components/      # Reusable UI components
+│
+├── 🔐 auth/              # Authentication
+│   └── auth_handler.py  # Login/logout logic
+│
+├── ⚙️ config/            # Configuration
+│   └── config.py        # App settings
+│
+├── 📊 logs/              # Logging
+│   └── app.log          # Application logs
+│
+├── 📁 data/              # Data Files
+│   ├── csv_files/       # Sample CSVs
+│   └── uploads/         # User uploads
+│
+├── 🚀 docker-compose.yml # Docker configuration
+├── 📋 requirements.txt   # Python dependencies
+├── 🔧 .env.example      # Environment template
+└── 📖 README.md         # This file
+```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+**Application won't start:**
+```bash
+# Check if port 8501 is available
+netstat -an | grep 8501
+
+# Kill existing Streamlit processes
+pkill -f streamlit
+
+# Restart with different port
+streamlit run pages/app.py --server.port 8502
+```
+
+**Database connection errors:**
+```bash
+# For SQLite - check file permissions
+ls -la *.db
+
+# For PostgreSQL - test connection
+psql -h localhost -U username -d employee_management
+```
+
+**AI features not working:**
+- Verify GEMINI_API_KEY is set correctly
+- Check internet connection
+- Ensure Generative Language API is enabled
+- Try regenerating API key
+
+**Docker issues:**
+```bash
+# Clean rebuild
+docker-compose down
+docker system prune -f
+docker-compose up --build
+```
+
+
+
+
+## 🙏 Acknowledgements
+
+- **[Streamlit](https://streamlit.io/)** - Web framework
+- **[SQLAlchemy](https://www.sqlalchemy.org/)** - Database ORM
+- **[PostgreSQL](https://www.postgresql.org/)** - Database engine
+- **[Google Gemini](https://ai.google.dev/)** - AI capabilities
+- **[Docker](https://www.docker.com/)** - Containerization
+
+
+

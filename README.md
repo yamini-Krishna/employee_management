@@ -288,7 +288,7 @@ docker-compose up --build
 
 
 
-## 🙏 Acknowledgements
+## Acknowledgements
 
 - **[Streamlit](https://streamlit.io/)** - Web framework
 - **[SQLAlchemy](https://www.sqlalchemy.org/)** - Database ORM

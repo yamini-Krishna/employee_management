@@ -4,34 +4,84 @@ A comprehensive, AI-powered HR management platform built with Python, Streamlit,
 
 ## 🚀 Quick Start
 
-
+### Step 1: Get the Code
 ```bash
-# Clone and navigate
-git clone https://github.com/yourusername/employee-management-system.git
-cd employee-management-system
-
-# Option 1: Docker (Recommended)
-docker-compose up --build
-
-# Option 2: Local Setup
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-streamlit run pages/app.py
+git clone https://github.com/yamini-Krishna/employee-management.git
+cd employee-management
 ```
 
-**Access the application:** http://localhost:8501
+### Step 2: Run the Application
+```bash
+docker-compose up --build
+```
 
-## 📋 Table of Contents
+### Step 3: Access Your Application
+- **Web Interface:** Open http://localhost:8501 in your browser
+- **Database:** Available on port 5432 (for admin access if needed)
 
-- [Features](#-features)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-- [Configuration](#-configuration)
-- [AI Features Setup](#-ai-features-setup)
-- [Project Structure](#-project-structure)
-- [Troubleshooting](#-troubleshooting)
+## 🛠️ Commands You'll Use
 
+### Start the Application
+```bash
+docker-compose up --build
+```
+- Builds the app image - employee_management-app 
+- Starts all services (app + database)
+- Use `--build` to ensure latest changes are included
+
+### Stop the Application
+```bash
+docker-compose down
+```
+- Stops all running containers
+- Keeps your data safe
+
+### View Running Containers
+```bash
+docker-compose ps
+```
+
+### View Application Logs
+```bash
+docker-compose logs -f
+```
+
+## 🔧 Development Mode
+
+### Make Changes and Test
+1. Edit your code files
+2. Restart the application:
+   ```bash
+   docker-compose down
+   docker-compose up --build
+   ```
+
+### Access Database Directly (if needed)
+```bash
+docker-compose exec database psql -U your_username -d employee_db
+```
+
+##  Troubleshooting
+
+### Port Already in Use
+If you get a port error, stop other applications using port 8501:
+```bash
+docker-compose down
+# Wait a few seconds, then try again
+docker-compose up --build
+```
+
+### Clean Start (Reset Everything)
+```bash
+docker-compose down -v
+docker-compose up --build
+```
+
+### Check What's Running
+```bash
+docker ps
+```
+---
 
 ## ✨ Features
 
@@ -61,57 +111,7 @@ streamlit run pages/app.py
 - **PostgreSQL** (optional - SQLite included for testing)
 - **Internet Connection** (for AI features)
 
-## 📦 Installation
-
-### Option 1: Docker Setup (Recommended)
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/yourusername/employee-management-system.git
-   cd employee-management-system
-   ```
-
-2. **Start the application:**
-   ```bash
-   docker-compose up --build
-   ```
-
-3. **Access the application:**
-   - **Web Interface:** http://localhost:8501
-   - **Database:** PostgreSQL on port 5432 (if using PostgreSQL)
-
-### Option 2: Local Development Setup
-
-1. **Clone and setup environment:**
-   ```bash
-   git clone https://github.com/yourusername/employee-management-system.git
-   cd employee-management-system
-   python -m venv venv
-   source venv/bin/activate  # Windows: venv\Scripts\activate
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Configure environment:**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your database credentials and API keys
-   ```
-
-4. **Initialize database:**
-   ```bash
-   python core/tables.py
-   python core/data_seeder.py  # Optional: Add sample data
-   ```
-
-5. **Run the application:**
-   ```bash
-   streamlit run pages/app.py
-   ```
-
+---     
 ## ⚙️ Configuration
 
 ### Environment Variables

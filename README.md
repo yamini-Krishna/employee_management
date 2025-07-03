@@ -181,35 +181,69 @@ DATABASE_URL=postgresql://username:password@localhost:5432/employee_management
 
 ```
 employee_management/
+├── __init__.py
+├── .env
+├── .dockerignore
+├── .gitignore
+├── Dockerfile
+├── docker-compose
+├── docker-compose.yml
+├── main.py
+├── requirements.txt
+├── sample_queries.md
+├── README.md
 │
-├── 🏗️ core/              # Backend Logic
-│   ├── database.py       # Database connections
-│   ├── models.py         # SQLAlchemy models
-│   ├── tables.py         # Table creation
-│   └── etl/              # Data processing
+├── auth/
+│   └── auth.py
 │
-├── 🎨 pages/             # Streamlit UI
-│   ├── app.py           # Main application
-│   ├── employee_mgmt.py # Employee management
-│   └── components/      # Reusable UI components
+├── config/
+│   └── config.py
 │
-├── 🔐 auth/              # Authentication
-│   └── auth_handler.py  # Login/logout logic
+├── core/
+│   ├── data_seeder.py
+│   ├── database.py
+│   ├── etl.py
+│   ├── models.py
+│   └── tables.py
 │
-├── ⚙️ config/            # Configuration
-│   └── config.py        # App settings
+├── pages/
+│   ├── allocations.py
+│   ├── app.py
+│   ├── custom_queries.py
+│   ├── employee_master.py
+│   ├── file_upload.py
+│   ├── query_assistant.py
+│   ├── report.py
+│   ├── summary_reports.py
+│   └── tasks_summariser.py
 │
-├── 📊 logs/              # Logging
-│   └── app.log          # Application logs
+├── logs/
+│   ├── activity_log_view.py
+│   ├── activity_logger.py
+│   ├── app.log
+│   └── (many db_creation_*.log files)
 │
-├── 📁 data/              # Data Files
-│   ├── csv_files/       # Sample CSVs
-│   └── uploads/         # User uploads
+├── csv_files/
+│   ├── attendance_report_daily.csv
+│   ├── employee_exit_report.csv
+│   ├── employee_master.csv
+│   ├── employee_work_profile.csv
+│   ├── experience_report.csv
+│   ├── project_allocations.csv
+│   ├── resource_utilization.csv
+│   └── timesheet_report_clean.csv
 │
-├── 🚀 docker-compose.yml # Docker configuration
-├── 📋 requirements.txt   # Python dependencies
-├── 🔧 .env.example      # Environment template
-└── 📖 README.md         # This file
+├── data/
+│   └── (data files, if any)
+│
+├── uploads/
+│   └── (uploaded files, if any)
+│
+├── init_db/
+│   └── (database initialization scripts)
+│
+└── __pycache__/
+    └── (Python cache files)
 ```
 
 ## 🔧 Troubleshooting

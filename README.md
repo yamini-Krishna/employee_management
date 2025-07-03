@@ -158,15 +158,11 @@ DATABASE_URL=postgresql://username:password@localhost:5432/employee_management
 
 2. **Configure the application:**
    ```bash
-   # Add to .env file
+   # Add to .env/docker-compose.yml file
    GEMINI_API_KEY=your_api_key_here
    ```
 
-3. **Enable Generative Language API:**
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Enable "Generative Language API"
-
-4. **Test AI features:**
+3. **Test AI features:**
    - Navigate to "🤖 AI Query Assistant"
    - Try: "Show me all employees hired this year"
    - The AI will generate and execute SQL queries

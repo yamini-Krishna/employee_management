@@ -28,7 +28,6 @@ streamlit run pages/app.py
 - [Prerequisites](#-prerequisites)
 - [Installation](#-installation)
 - [Configuration](#-configuration)
-- [Usage](#-usage)
 - [AI Features Setup](#-ai-features-setup)
 - [Project Structure](#-project-structure)
 - [Troubleshooting](#-troubleshooting)

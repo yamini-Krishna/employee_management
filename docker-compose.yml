@@ -41,7 +41,7 @@ services:
       APP_PASSWORD: aganitha@123
       
       # API Keys (replace with your actual keys)
-      GEMINI_API_KEY: AIzaSyBx6zw9ZbXet_dW3pnx2f9I0qWKOnPq4yM
+      GEMINI_API_KEY: your_gemini_api_key
 
       
       # Streamlit Configuration

@@ -80,7 +80,7 @@ def get_employee_allocations(engine, employee_code):
     try:
         with engine.connect() as conn:
             result = conn.execute(text("""
-                SELECT 
+                SELECT DISTINCT
                     pa.allocation_id,
                     pa.project_id,
                     p.project_name,
@@ -115,7 +115,15 @@ def get_employee_allocations(engine, employee_code):
                     ) as last_day
                 FROM project_allocation pa
                 JOIN project p ON pa.project_id = p.project_id
-                WHERE pa.employee_code = :employee_code AND pa.status = 'Active'
+                WHERE pa.employee_code = :employee_code 
+                AND pa.status = 'Active'
+                AND pa.allocation_id IN (
+                    SELECT MAX(allocation_id) 
+                    FROM project_allocation 
+                    WHERE employee_code = :employee_code 
+                    AND status = 'Active'
+                    GROUP BY project_id
+                )
                 ORDER BY pa.project_id
             """), {"employee_code": employee_code})
             return result.fetchall()

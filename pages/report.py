@@ -340,44 +340,29 @@ def show_project_master_report(engine=None, db_pool=None):
                         else:
                             st.metric("Avg Allocation", "0.0%")
 
-                    # with col4:
-                    #     # Total hours spent on this project from timesheet data
-                    #     try:
-                    #         # First, let's check if we can access timesheet data at all
-                    #         st.write(f"Debug: Project ID = {selected_project}")
+                    with col4:
+                        # Total hours spent on this project from timesheet data
+                        try:
+                            # Query to get total hours for the project
+                            total_hours_query = f"""
+                            SELECT ROUND(SUM(t.hours_worked)::numeric, 2) as total_hours
+                            FROM timesheet t
+                            WHERE t.project_id = '{project_id}'
+                            """
                             
-                    #         # Simple query first
-                    #         total_hours_query = f"""
-                    #         SELECT SUM(hours_worked) as total_hours
-                    #         FROM timesheet 
-                    #         WHERE project_id = '{selected_project}'
-                    #         """
+                            total_hours_result = run_query(total_hours_query, engine, db_pool)
                             
-                    #         st.write(f"Debug: Running query...")
-                    #         total_hours_result = execute_query(total_hours_query)
-                            
-                    #         st.write(f"Debug: Query result type: {type(total_hours_result)}")
-                    #         st.write(f"Debug: Query result: {total_hours_result}")
-                            
-                    #         if total_hours_result is not None and len(total_hours_result) > 0:
-                    #             total_hours = total_hours_result.iloc[0, 0]  # First row, first column
-                    #             if pd.isna(total_hours):
-                    #                 total_hours = 0
-                    #             st.metric("Total Hours", f"{float(total_hours):.1f}")
-                    #         else:
-                    #             st.metric("Total Hours", "0.0")
+                            if not total_hours_result.empty and total_hours_result.iloc[0, 0] is not None:
+                                total_hours = total_hours_result.iloc[0, 0]
+                                if pd.isna(total_hours):
+                                    total_hours = 0
+                                st.metric("Total Hours", f"{float(total_hours):.1f}h")
+                            else:
+                                st.metric("Total Hours", "0.0h")
                                 
-                    #     except Exception as e:
-                    #         st.metric("Total Hours", "Error")
-                    #         st.error(f"Full error: {str(e)}")
-                            
-                    #         # Let's try to see what tables are available
-                    #         try:
-                    #             test_query = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
-                    #             tables = execute_query(test_query)
-                    #             st.write("Available tables:", tables)
-                    #         except:
-                    #             st.write("Cannot access table information")
+                        except Exception as e:
+                            st.metric("Total Hours", "N/A")
+                            st.error(f"Error fetching hours data: {str(e)}")
                
                     
                     # Team composition with segregation
@@ -663,5 +648,23 @@ def get_project_weekly_hours(project_id, start_date, end_date, engine=None, db_p
     WHERE t.project_id = '{project_id}'
     AND t.work_date BETWEEN '{start_date}' AND '{end_date}'
     ORDER BY t.employee_code, t.work_date
+    """
+    return run_query(query, engine, db_pool)
+
+def get_project_hours_by_employee(project_id, engine=None, db_pool=None):
+    """Get hours breakdown by employee for a specific project"""
+    query = f"""
+    SELECT
+        e.employee_name,
+        ROUND(SUM(t.hours_worked)::numeric, 2) AS total_hours
+    FROM timesheet AS t
+    JOIN employee AS e
+        ON t.employee_code = e.employee_code
+    WHERE
+        t.project_id = '{project_id}'
+    GROUP BY
+        e.employee_name
+    ORDER BY
+        total_hours DESC
     """
     return run_query(query, engine, db_pool)

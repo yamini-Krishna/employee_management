@@ -1,5 +1,3 @@
-
-
 """
 Main Streamlit application for HR Management System
 """
@@ -52,13 +50,80 @@ activity_logger = get_logger(engine)
 # Import configurations
 from config.config import app_config, etl_config, db_config
 
-# Set page config first
+# Set page config first with custom theme and favicon
 st.set_page_config(
-    page_title=app_config.title,
-    page_icon="📊",
+    page_title="Aganitha HR Management System",
+    page_icon="🧑‍💼",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Inject custom CSS for blue theme and professional look
+st.markdown(
+    """
+    <style>
+    /* Main background and font */
+    .stApp { background-color: #f4f8fb; font-family: 'Segoe UI', Arial, sans-serif; }
+    /* Sidebar styling */
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(135deg, #1f4e79 80%, #4472c4 100%);
+        color: #fff;
+    }
+    .st-emotion-cache-1v0mbdj, .st-emotion-cache-1v0mbdj p, .st-emotion-cache-1v0mbdj h1, .st-emotion-cache-1v0mbdj h2, .st-emotion-cache-1v0mbdj h3 {
+        color: #1f4e79 !important;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background: #eaf1fb;
+        color: #1f4e79;
+        border-radius: 8px 8px 0 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    .stTabs [aria-selected="true"] {
+        background: #1f4e79;
+        color: #fff !important;
+    }
+    .stButton>button {
+        background-color: #1f4e79;
+        color: #fff;
+        border-radius: 6px;
+        font-weight: 600;
+        border: none;
+        padding: 0.5em 1.2em;
+    }
+    .stButton>button:hover {
+        background-color: #4472c4;
+        color: #fff;
+    }
+    .stMetric {
+        background: #eaf1fb;
+        border-radius: 8px;
+        padding: 0.5em 1em;
+    }
+    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+        color: #1f4e79 !important;
+    }
+    .st-bb, .st-cq, .st-cp, .st-cr, .st-cs, .st-ct, .st-cu, .st-cv, .st-cw, .st-cx, .st-cy, .st-cz {
+        color: #1f4e79 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Sidebar with company branding
+with st.sidebar:
+    st.image("https://aganitha.ai/wp-content/uploads/2022/09/aganitha-logo.png", width=180)
+    st.markdown("""
+    <h2 style='color:#fff; margin-bottom:0;'>Aganitha HR Portal</h2>
+    <p style='color:#eaf1fb; font-size:1.1em;'>Empowering People, Enabling Growth</p>
+    <hr style='border:1px solid #eaf1fb; margin:1em 0;'>
+    """, unsafe_allow_html=True)
+    st.markdown(f"<b>User:</b> {auth_manager.get_current_user()}", unsafe_allow_html=True)
+    st.markdown("---")
+    if st.button("🚪 Logout", use_container_width=True):
+        auth_manager.logout()
+    st.markdown("<br><br><small style='color:#eaf1fb;'>© 2025 Aganitha Cognitive Solutions</small>", unsafe_allow_html=True)
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -104,15 +169,15 @@ def render_authenticated_app():
     logger.info(f"User: {db_config.user}")
     logger.info(f"Port: {db_config.port}")
 
-    # Add logout button to sidebar
-    with st.sidebar:
-        st.markdown("---")
-        st.markdown(f"👤 **Logged in as:** {auth_manager.get_current_user()}")
-        if st.button("🚪 Logout", use_container_width=True):
-            auth_manager.logout()
-
-    # Page title
-    st.title("Employee Reports Dashboard")
+    # Page title and welcome
+    st.markdown("""
+    <div style='display:flex; align-items:center; gap:1em;'>
+        <img src='https://aganitha.ai/wp-content/uploads/2022/09/aganitha-logo.png' width='60'>
+        <h1 style='color:#1f4e79; margin-bottom:0;'>Aganitha HR Management System</h1>
+    </div>
+    <p style='color:#4472c4; font-size:1.2em; margin-top:0;'>Welcome to the central hub for all your HR needs.</p>
+    <hr style='border:1px solid #1f4e79;'>
+    """, unsafe_allow_html=True)
 
     # Create tabs
     tabs = st.tabs([

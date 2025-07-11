@@ -88,55 +88,99 @@ def create_project_document_report(project_data, project_info, weekly_hours_data
     # Team Composition Section
     if not project_data.empty:
         elements.append(Paragraph("TEAM COMPOSITION & ALLOCATION HISTORY", heading_style))
-        
-        # Get unique employees first to avoid duplicates
-        unique_employees = project_data['employee_code'].unique()
-        
-        for emp_code in unique_employees:
-            emp_data = project_data[project_data['employee_code'] == emp_code]
-            emp_info = emp_data.iloc[0]  # Get basic employee info
-            
-            elements.append(Paragraph(f"{emp_info['employee_name']} ({emp_code})", subheading_style))
-            
-            # Employee basic details (shown once)
-            emp_details = f"""
-            <b>Designation:</b> {emp_info.get('designation_name', 'N/A')}<br/>
-            <b>Department:</b> {emp_info.get('department_name', 'N/A')}<br/>
-            <b>Employee Type:</b> {emp_info.get('employee_type', 'N/A')}<br/>
-            <b>Total Experience:</b> {emp_info.get('total_experience', 'N/A')} years<br/>
-            """
-            elements.append(Paragraph(emp_details, styles['Normal']))
-            elements.append(Spacer(1, 8))
-            
-            # Clean allocation history - remove duplicates based on key fields
-            allocation_columns = ['effective_from', 'effective_to', 'allocation_percentage', 'allocation_status', 'change_reason']
-            unique_allocations = emp_data[allocation_columns].drop_duplicates()
-            
-            if len(unique_allocations) > 0:
-                elements.append(Paragraph("<b>Allocation History:</b>", styles['Normal']))
-                
-                for _, allocation in unique_allocations.iterrows():
-                    # Format duration
-                    duration_text = f"From {allocation['effective_from']}"
-                    if pd.notna(allocation['effective_to']) and allocation['effective_to']:
-                        duration_text += f" to {allocation['effective_to']}"
-                    else:
-                        duration_text += " (Current)"
-                    
-                    # Build allocation text
-                    alloc_text = f"""
-                    • <b>Period:</b> {duration_text}<br/>
-                      <b>Allocation:</b> {allocation['allocation_percentage']}%<br/>
-                      <b>Status:</b> {allocation['allocation_status']}<br/>
-                    """
-                    
-                    # Add reason if available and not empty
-                    if pd.notna(allocation.get('change_reason')) and allocation.get('change_reason'):
-                        alloc_text += f"      <b>Reason:</b> {allocation['change_reason']}<br/>"
-                    
-                    elements.append(Paragraph(alloc_text, styles['Normal']))
-            
-            elements.append(Spacer(1, 12))
+
+        # Separate current and past employees
+        current_employees = project_data[
+            (project_data['allocation_status'] == 'Active') & 
+            (project_data['effective_to'].isna())
+        ]['employee_code'].unique()
+        past_employees = project_data[
+            ~project_data['employee_code'].isin(current_employees)
+        ]['employee_code'].unique()
+
+        # Helper to get total hours and task summaries for an employee
+        def get_emp_stats(emp_code):
+            emp_hours = weekly_hours_data[weekly_hours_data['employee_code'] == emp_code]
+            total_hours = emp_hours['hours_worked'].sum() if not emp_hours.empty else 0
+            # Task summaries: count unique task descriptions
+            task_summaries = emp_hours['task_description'].dropna().unique()
+            return total_hours, task_summaries
+
+        # --- Current Employees ---
+        if len(current_employees) > 0:
+            elements.append(Paragraph("<b>Current Team Members</b>", styles['Normal']))
+            for emp_code in current_employees:
+                emp_data = project_data[project_data['employee_code'] == emp_code]
+                emp_info = emp_data.iloc[0]
+                total_hours, task_summaries = get_emp_stats(emp_code)
+                elements.append(Paragraph(f"{emp_info['employee_name']} ({emp_code})", subheading_style))
+                emp_details = f"""
+                <b>Designation:</b> {emp_info.get('designation_name', 'N/A')}<br/>
+                <b>Department:</b> {emp_info.get('department_name', 'N/A')}<br/>
+                <b>Employee Type:</b> {emp_info.get('employee_type', 'N/A')}<br/>
+                <b>Total Experience:</b> {emp_info.get('total_experience', 'N/A')} years<br/>
+                <b>Total Hours:</b> {total_hours:.1f}<br/>
+                <b>Task Summaries:</b> {', '.join(task_summaries) if len(task_summaries) else 'N/A'}<br/>
+                """
+                elements.append(Paragraph(emp_details, styles['Normal']))
+                elements.append(Spacer(1, 8))
+                allocation_columns = ['effective_from', 'effective_to', 'allocation_percentage', 'allocation_status', 'change_reason']
+                unique_allocations = emp_data[allocation_columns].drop_duplicates()
+                if len(unique_allocations) > 0:
+                    elements.append(Paragraph("<b>Allocation History:</b>", styles['Normal']))
+                    for _, allocation in unique_allocations.iterrows():
+                        duration_text = f"From {allocation['effective_from']}"
+                        if pd.notna(allocation['effective_to']) and allocation['effective_to']:
+                            duration_text += f" to {allocation['effective_to']}"
+                        else:
+                            duration_text += " (Current)"
+                        alloc_text = f"""
+                        • <b>Period:</b> {duration_text}<br/>
+                          <b>Allocation:</b> {allocation['allocation_percentage']}%<br/>
+                          <b>Status:</b> {allocation['allocation_status']}<br/>
+                        """
+                        if pd.notna(allocation.get('change_reason')) and allocation.get('change_reason'):
+                            alloc_text += f"      <b>Reason:</b> {allocation['change_reason']}<br/>"
+                        elements.append(Paragraph(alloc_text, styles['Normal']))
+                elements.append(Spacer(1, 12))
+
+        # --- Past Employees ---
+        if len(past_employees) > 0:
+            elements.append(Paragraph("<b>Past Team Members</b>", styles['Normal']))
+            for emp_code in past_employees:
+                emp_data = project_data[project_data['employee_code'] == emp_code]
+                emp_info = emp_data.iloc[0]
+                total_hours, task_summaries = get_emp_stats(emp_code)
+                elements.append(Paragraph(f"{emp_info['employee_name']} ({emp_code})", subheading_style))
+                emp_details = f"""
+                <b>Designation:</b> {emp_info.get('designation_name', 'N/A')}<br/>
+                <b>Department:</b> {emp_info.get('department_name', 'N/A')}<br/>
+                <b>Employee Type:</b> {emp_info.get('employee_type', 'N/A')}<br/>
+                <b>Total Experience:</b> {emp_info.get('total_experience', 'N/A')} years<br/>
+                <b>Total Hours:</b> {total_hours:.1f}<br/>
+                <b>Task Summaries:</b> {', '.join(task_summaries) if len(task_summaries) else 'N/A'}<br/>
+                """
+                elements.append(Paragraph(emp_details, styles['Normal']))
+                elements.append(Spacer(1, 8))
+                allocation_columns = ['effective_from', 'effective_to', 'allocation_percentage', 'allocation_status', 'change_reason']
+                unique_allocations = emp_data[allocation_columns].drop_duplicates()
+                if len(unique_allocations) > 0:
+                    elements.append(Paragraph("<b>Allocation History:</b>", styles['Normal']))
+                    for _, allocation in unique_allocations.iterrows():
+                        duration_text = f"From {allocation['effective_from']}"
+                        if pd.notna(allocation['effective_to']) and allocation['effective_to']:
+                            duration_text += f" to {allocation['effective_to']}"
+                        else:
+                            duration_text += " (Current)"
+                        alloc_text = f"""
+                        • <b>Period:</b> {duration_text}<br/>
+                          <b>Allocation:</b> {allocation['allocation_percentage']}%<br/>
+                          <b>Status:</b> {allocation['allocation_status']}<br/>
+                        """
+                        if pd.notna(allocation.get('change_reason')) and allocation.get('change_reason'):
+                            alloc_text += f"      <b>Reason:</b> {allocation['change_reason']}<br/>"
+                        elements.append(Paragraph(alloc_text, styles['Normal']))
+                elements.append(Spacer(1, 12))
     
     # Weekly Hours Analysis Section
     if not weekly_hours_data.empty:
@@ -386,22 +430,21 @@ def show_project_master_report(engine=None, db_pool=None):
                     # Current Team Members
                     if len(current_employees) > 0:
                         st.markdown("####  **Current Team Members**")
-                        
                         for emp_code in current_employees:
                             emp_data = project_data_clean[project_data_clean['employee_code'] == emp_code]
                             emp_info = emp_data.iloc[0]
-                            
                             # Get current allocation
                             current_allocation = emp_data[
                                 (emp_data['allocation_status'] == 'Active') & 
                                 (emp_data['effective_to'].isna())
                             ]
-                            
                             current_alloc_pct = current_allocation['allocation_percentage'].iloc[0] if not current_allocation.empty else 0
-                            
+                            # Calculate total hours and task summaries
+                            emp_hours = weekly_hours_data[weekly_hours_data['employee_code'] == emp_code]
+                            total_hours = emp_hours['hours_worked'].sum() if not emp_hours.empty else 0
+                            task_summaries = emp_hours['task_description'].dropna().unique()
                             with st.expander(f"👤 {emp_info['employee_name']} ({emp_code}) - **{current_alloc_pct}% allocated**"):
                                 col1, col2 = st.columns([2, 1])
-                                
                                 with col1:
                                     st.markdown(f"""
                                     **Personal Details:**
@@ -409,23 +452,20 @@ def show_project_master_report(engine=None, db_pool=None):
                                     - **Department:** {emp_info.get('department_name', 'N/A')}
                                     - **Employee Type:** {emp_info.get('employee_type', 'N/A')}
                                     - **Total Experience:** {emp_info.get('total_experience', 'N/A')} years
-                                    
+                                    - **Total Hours:** {total_hours:.1f}
+                                    - **Task Summaries:** {', '.join(task_summaries) if len(task_summaries) else 'N/A'}
                                     **Allocation History:**
                                     """)
-                                    
                                     for _, allocation in emp_data.iterrows():
                                         duration_text = f"From {allocation['effective_from']}"
                                         if pd.notna(allocation['effective_to']):
                                             duration_text += f" to {allocation['effective_to']}"
                                             days = (pd.to_datetime(allocation['effective_to']) - pd.to_datetime(allocation['effective_from'])).days
                                             duration_text += f" ({days} days)"
-                                            # status_icon = "🔴"
                                         else:
                                             duration_text += " (Current)"
                                             days = (datetime.now().date() - pd.to_datetime(allocation['effective_from']).date()).days
                                             duration_text += f" ({days} days so far)"
-                                            # status_icon = "🟢"
-                                        
                                         st.markdown(f"""
                                         **Period:** {duration_text}  
                                         &nbsp;&nbsp;&nbsp;&nbsp;**Allocation:** {allocation['allocation_percentage']}%  
@@ -433,24 +473,17 @@ def show_project_master_report(engine=None, db_pool=None):
                                         if allocation.get('change_reason'):
                                             st.markdown(f"&nbsp;&nbsp;&nbsp;&nbsp;**Reason:** {allocation['change_reason']}")
                                         st.markdown("")
-                                
                                 with col2:
                                     # Weekly hours for this employee
-                                    emp_hours = weekly_hours_data[weekly_hours_data['employee_code'] == emp_code]
                                     if not emp_hours.empty:
                                         st.markdown("**Recent Hours Summary:**")
-                                        
-                                        # Create weekly summary
                                         emp_hours['week'] = pd.to_datetime(emp_hours['work_date']).dt.isocalendar().week
                                         emp_hours['year'] = pd.to_datetime(emp_hours['work_date']).dt.year
                                         weekly_summary = emp_hours.groupby(['year', 'week']).agg({
                                             'hours_worked': 'sum',
                                             'work_date': 'count'
                                         }).rename(columns={'work_date': 'days_worked'}).tail(4)
-                                        
-                                        total_hours = emp_hours['hours_worked'].sum()
                                         st.metric("Total Hours", f"{total_hours:.1f}h")
-                                        
                                         for (year, week), week_data in weekly_summary.iterrows():
                                             st.markdown(f"""
                                             **Week {week}, {year}:**  
@@ -458,25 +491,24 @@ def show_project_master_report(engine=None, db_pool=None):
                                             """)
                                     else:
                                         st.markdown(" ")
-                    
                     # Past Team Members
                     if len(past_employees) > 0:
                         st.markdown("####  **Past Team Members**")
-                        
                         for emp_code in past_employees:
                             emp_data = project_data_clean[project_data_clean['employee_code'] == emp_code]
                             emp_info = emp_data.iloc[0]
-                            
                             # Calculate total days worked
                             total_days = 0
                             for _, allocation in emp_data.iterrows():
                                 if pd.notna(allocation['effective_to']):
                                     days = (pd.to_datetime(allocation['effective_to']) - pd.to_datetime(allocation['effective_from'])).days
                                     total_days += days
-                            
+                            # Calculate total hours and task summaries
+                            emp_hours = weekly_hours_data[weekly_hours_data['employee_code'] == emp_code]
+                            total_hours = emp_hours['hours_worked'].sum() if not emp_hours.empty else 0
+                            task_summaries = emp_hours['task_description'].dropna().unique()
                             with st.expander(f"👤 {emp_info['employee_name']} ({emp_code}) - **Worked {total_days} days**"):
                                 col1, col2 = st.columns([2, 1])
-                                
                                 with col1:
                                     st.markdown(f"""
                                     **Personal Details:**
@@ -484,16 +516,15 @@ def show_project_master_report(engine=None, db_pool=None):
                                     - **Department:** {emp_info.get('department_name', 'N/A')}
                                     - **Employee Type:** {emp_info.get('employee_type', 'N/A')}
                                     - **Total Experience:** {emp_info.get('total_experience', 'N/A')} years
-                                    
+                                    - **Total Hours:** {total_hours:.1f}
+                                    - **Task Summaries:** {', '.join(task_summaries) if len(task_summaries) else 'N/A'}
                                      Historical Allocation:
                                     """)
-                                    
                                     for _, allocation in emp_data.iterrows():
                                         if pd.notna(allocation['effective_to']):
                                             duration_text = f"From {allocation['effective_from']} to {allocation['effective_to']}"
                                             days = (pd.to_datetime(allocation['effective_to']) - pd.to_datetime(allocation['effective_from'])).days
                                             duration_text += f" ({days} days)"
-                                            
                                             st.markdown(f"""
                                             **Period:** {duration_text}  
                                             &nbsp;&nbsp;&nbsp;&nbsp;**Allocation:** {allocation['allocation_percentage']}%  
@@ -501,16 +532,12 @@ def show_project_master_report(engine=None, db_pool=None):
                                             if allocation.get('change_reason'):
                                                 st.markdown(f"&nbsp;&nbsp;&nbsp;&nbsp;**Reason:** {allocation['change_reason']}")
                                             st.markdown("")
-                                
                                 with col2:
                                     # Historical hours for this employee
-                                    emp_hours = weekly_hours_data[weekly_hours_data['employee_code'] == emp_code]
                                     if not emp_hours.empty:
                                         st.markdown("**Historical Hours:**")
-                                        total_hours = emp_hours['hours_worked'].sum()
-                                        avg_hours_per_day = emp_hours['hours_worked'].mean()
-                                        
                                         st.metric("Total Hours", f"{total_hours:.1f}h")
+                                        avg_hours_per_day = emp_hours['hours_worked'].mean()
                                         st.metric("Avg Hours/Day", f"{avg_hours_per_day:.1f}h")
                                     else:
                                         st.markdown(" ")

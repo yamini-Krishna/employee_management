@@ -327,15 +327,22 @@ def show_project_master_report(engine=None, db_pool=None):
                 project_id = selected_project.split("(")[-1].rstrip(")")
                 project_name = selected_project.split(" (")[0]
                 
-                # Date range filter
-                col1, col2 = st.columns(2)
-                with col1:
-                    start_date = st.date_input("📅 From Date", value=datetime.now() - timedelta(days=90), key="proj_start_date")
-                with col2:
-                    end_date = st.date_input("📅 To Date", value=datetime.now(), key="proj_end_date")
-                
-                # Get comprehensive project data
+                # Remove date range filter UI; use project start/end dates from project_info
                 project_info = get_project_info(project_id, engine, db_pool)
+                if not project_info.empty:
+                    proj_info = project_info.iloc[0]
+                    # Use project start and end dates for data queries
+                    start_date = proj_info.get('start_date', None)
+                    end_date = proj_info.get('end_date', None)
+                    if not start_date:
+                        start_date = datetime.now() - timedelta(days=90)
+                    if not end_date or pd.isna(end_date):
+                        end_date = datetime.now().date()
+                else:
+                    # Fallback if project_info is empty
+                    start_date = datetime.now() - timedelta(days=90)
+                    end_date = datetime.now().date()
+                # Get comprehensive project data
                 project_data = get_project_allocation_history(project_id, engine, db_pool)
                 weekly_hours_data = get_project_weekly_hours(project_id, start_date, end_date, engine, db_pool)
                 

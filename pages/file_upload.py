@@ -1,4 +1,3 @@
- 
 import streamlit as st
 import pandas as pd
 from pathlib import Path
@@ -28,12 +27,27 @@ def render_file_upload(db_pool):
 
         # Process uploaded files silently
         for uploaded_file in uploaded_files:
-            # Map file to type based on name
+            # Map file to type based on name (updated mapping)
             file_type = None
-            for type_key, type_name in etl_config.required_files.items():
-                if type_name.lower() in uploaded_file.name.lower():
-                    file_type = type_key
-                    break
+            filename_lower = uploaded_file.name.lower()
+            
+            # More flexible file type detection
+            if 'attendance' in filename_lower or 'attendance_report' in filename_lower:
+                file_type = 'attendance_report'
+            elif 'exit' in filename_lower or 'employee_exit' in filename_lower:
+                file_type = 'employee_exit'
+            elif 'work' in filename_lower or 'work_profile' in filename_lower or 'employee_work' in filename_lower:
+                file_type = 'work_profile'
+            elif 'employee_master' in filename_lower or 'master' in filename_lower:
+                file_type = 'employee_master'
+            elif 'experience' in filename_lower or 'experience_report' in filename_lower:
+                file_type = 'experience_report'
+            elif 'timesheet' in filename_lower:
+                file_type = 'timesheet_report'
+            elif 'allocation' in filename_lower or 'project_allocation' in filename_lower:
+                file_type = 'project_allocations'
+            elif 'resource' in filename_lower or 'utilization' in filename_lower:
+                file_type = 'resource_utilization'
 
             if file_type:
                 # Save uploaded file

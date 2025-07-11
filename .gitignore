@@ -32,3 +32,8 @@ venv/
 data/
 uploads/
 EOF
+.venv/
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+__pycache__/
+index.html

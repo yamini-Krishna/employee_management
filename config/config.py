@@ -64,49 +64,61 @@ db_config = DatabaseConfig()
 etl_config = ETLConfig()
 app_config = AppConfig()
 
-# Validation schemas for each file type
+# Validation schemas for each file type (updated to match actual formats)
 FILE_SCHEMAS = {
     'employee_master': {
         'required_columns': [
-            'Employee Code', 'Employee Name', 'Email', 'Date Of Joining',
-            'Employee Type', 'Department', 'Designation'
+            'Employee Code', 'Employee Name', 'Date Of Joining', 'Employee Type'
         ],
         'optional_columns': [
-            'Mobile Number', 'Grade', 'Business Unit', 'Parent Department',
-            'Status', 'Gender', 'Date Of Birth', 'Marital Status',
-            'Present Address', 'Permanent Address', 'PAN Number', 'Aadhaar Number',
-            'Bank Name', 'Account Number', 'IFSC Code'
+            'Email', 'Additional Email', 'Mobile Number', 'Secondary Mobile Number',
+            'Gender', 'Date Of Birth', 'Marital Status', 'Office Location',
+            'Business Unit', 'Designation', 'Department', 'Grade', 'Parent Department',
+            'Primary Manager', 'Primary Manager Email', 'Bank Name', 'Branch Name',
+            'Account Holder Name', 'Account Number', 'Account Type', 'IFSC Code',
+            'PAN Number', 'Aadhaar Enrollment Number', 'Aadhaar Number',
+            'Present Address', 'Present State', 'Present City', 'Present Pincode',
+            'Present Country', 'Permanent Address', 'Permanent State', 'Permanent City',
+            'Permanent Pincode', 'Permanent Country', 'Status'
         ]
     },
     'employee_exit': {
         'required_columns': [
-            'Employee Code', 'Exit Date', 'Expected Resignation Date'
+            'Employee Code', 'Exit Date'
         ],
         'optional_columns': [
-            'Exit Reason', 'Exit Comments', 'Notice Period', 'Last Working Date'
+            'Employee Name', 'Department', 'Designation', 'Date Of Joining',
+            'Notice Date', 'Exit Policy Name', 'Expected Resignation Date',
+            'Notice Period Days', 'Reason', 'Reason Type', 'Reason of Exit',
+            'Resigned Added On'
         ]
     },
     'experience_report': {
         'required_columns': [
-            'Employee Code', 'Employee Name', 'Business Unit', 'Department',
-            'Designation', 'Date Of Joining', 'Current Experience',
-            'Past Experience', 'Total Experience'
+            'Employee Code', 'Employee Name', 'Date Of Joining'
         ],
-        'optional_columns': []
+        'optional_columns': [
+            'Business Unit', 'Department', 'Designation', 'Current Experience',
+            'Past Experience', 'Total Experience'
+        ]
     },
     'work_profile': {
         'required_columns': [
-            'Employee Code', 'Employee Name', 'Business Unit', 'Parent Designation',
-            'Assigned Department', 'Designation', 'Office Location Name'
+            'Employee Code', 'Employee Name'
         ],
-        'optional_columns': []
+        'optional_columns': [
+            'Business Unit', 'Parent Department', 'Department', 'Designation',
+            'Office Location'
+        ]
     },
     'attendance_report': {
         'required_columns': [
-            'Date', 'Employee Code', 'Employee Name', 'Clock-In Time', 'Clock-Out Time'
+            'Employee Code', 'Employee Name', 'ShiftDate'
         ],
         'optional_columns': [
-            'Total Hours'
+            'Business Unit', 'Team', 'Department', 'Designation', 'DOJ',
+            'Shift Name', 'Day', 'In Time', 'Out Time', 'Work Duration',
+            'Break Duration', 'Late By', 'Over Time', 'Status'
         ]
     },
     'timesheet_report': {
@@ -126,11 +138,76 @@ FILE_SCHEMAS = {
             'created_by', 'change_reason'
         ]
     },
-    'resource_utiliszation': {
+    'resource_utilization': {
         'required_columns': [
-            'project_id','week_start_date', 'week_end_date', 'working_hours',
+            'project_id','week_start_date', 'working_hours',
         ],
-        'optional_columns': []
+        'optional_columns': [
+            'week_end_date'
+        ]
+    }
+}
+
+# Column mapping for actual CSV fields to database fields
+COLUMN_MAPPINGS = {
+    'employee_master': {
+        'Employee Code': 'employee_code',
+        'Employee Name': 'employee_name',
+        'Email': 'email',
+        'Mobile Number': 'mobile_number',
+        'Date Of Joining': 'date_of_joining',
+        'Employee Type': 'employee_type',
+        'Gender': 'gender',
+        'Date Of Birth': 'date_of_birth',
+        'Marital Status': 'marital_status',
+        'Business Unit': 'business_unit',
+        'Department': 'department_name',
+        'Designation': 'designation_name',
+        'Grade': 'grade',
+        'Parent Department': 'parent_department',
+        'Status': 'status',
+        'Present Address': 'present_address',
+        'Permanent Address': 'permanent_address',
+        'PAN Number': 'pan_number',
+        'Aadhaar Number': 'aadhaar_number',
+        'Bank Name': 'bank_name',
+        'Account Number': 'account_number',
+        'IFSC Code': 'ifsc_code'
+    },
+    'attendance_report': {
+        'Employee Code': 'employee_code',
+        'Employee Name': 'employee_name',
+        'ShiftDate': 'attendance_date',
+        'In Time': 'clock_in_time',
+        'Out Time': 'clock_out_time',
+        'Status': 'attendance_type'
+    },
+    'employee_exit': {
+        'Employee Code': 'employee_code',
+        'Employee Name': 'employee_name',
+        'Exit Date': 'exit_date',
+        'Expected Resignation Date': 'last_working_date',
+        'Reason': 'exit_reason',
+        'Reason of Exit': 'exit_comments'
+    },
+    'work_profile': {
+        'Employee Code': 'employee_code',
+        'Employee Name': 'employee_name',
+        'Business Unit': 'business_unit',
+        'Department': 'assigned_department',
+        'Designation': 'designation',
+        'Office Location': 'office_location_name'
+    },
+    'experience_report': {
+        'Employee Code': 'employee_code',
+        'Employee Name': 'employee_name',
+        'Business Unit': 'business_unit',
+        'Department': 'department',
+        'Designation': 'designation',
+        'Date Of Joining': 'date_of_joining',
+        'Current Experience': 'current_experience',
+        'Past Experience': 'past_experience',
+        'Total Experience': 'total_experience'
     }
 }
 
@@ -153,4 +230,4 @@ DATA_TYPE_RULES = {
     'Billable Hours': float,
     'Working Hours': float,
     'Overtime': float
-} 
+}

@@ -113,7 +113,7 @@ st.markdown(
 
 # Sidebar with company branding
 with st.sidebar:
-    st.image("https://aganitha.ai/wp-content/uploads/2022/09/aganitha-logo.png", width=180)
+    st.image("https://www.aganitha.ai/wp-content/uploads/2023/05/aganitha-logo.png", width=180)
     st.markdown("""
     <h2 style='color:#fff; margin-bottom:0;'>Aganitha HR Portal</h2>
     <p style='color:#eaf1fb; font-size:1.1em;'>Empowering People, Enabling Growth</p>
@@ -172,7 +172,7 @@ def render_authenticated_app():
     # Page title and welcome
     st.markdown("""
     <div style='display:flex; align-items:center; gap:1em;'>
-        <img src='https://aganitha.ai/wp-content/uploads/2022/09/aganitha-logo.png' width='60'>
+        <img src='https://www.aganitha.ai/wp-content/uploads/2023/05/aganitha-logo.png' width='60'>
         <h1 style='color:#1f4e79; margin-bottom:0;'>Aganitha HR Management System</h1>
     </div>
     <p style='color:#4472c4; font-size:1.2em; margin-top:0;'>Welcome to the central hub for all your HR needs.</p>

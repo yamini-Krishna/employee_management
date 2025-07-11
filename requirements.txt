@@ -32,4 +32,3 @@ pyyaml>=6.0
 plotly>=5.15.0
 
 reportlab
-

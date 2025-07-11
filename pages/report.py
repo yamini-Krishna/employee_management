@@ -11,7 +11,7 @@ from pages.employee_master import show_employee_master_report
 import plotly.express as px
 import plotly.graph_objects as go
 
-def create_project_document_report(project_data, project_info, weekly_hours_data, title):
+def create_project_document_report(project_data, project_info, weekly_hours_data, title, engine=None, db_pool=None):
     """Create a comprehensive document-style PDF report with clean, non-repetitive content"""
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)
@@ -57,8 +57,33 @@ def create_project_document_report(project_data, project_info, weekly_hours_data
     # Project Overview Section
     if not project_info.empty:
         elements.append(Paragraph("PROJECT OVERVIEW", heading_style))
-        
         proj_info = project_info.iloc[0]
+        # Fetch manager using primary_manager_id
+        manager = get_project_manager(proj_info.get('project_id'), engine, db_pool)
+        manager_name = manager['employee_name'] if manager else 'N/A'
+        # Total hours for project (match UI col4)
+        total_hours = None
+        if not weekly_hours_data.empty:
+            total_hours = weekly_hours_data['hours_worked'].sum()
+        elif not project_data.empty:
+            try:
+                project_id = proj_info.get('project_id', None)
+                if project_id:
+                    total_hours_query = f"""
+                    SELECT ROUND(SUM(t.hours_worked)::numeric, 2) as total_hours
+                    FROM timesheet t
+                    WHERE t.project_id = '{project_id}'
+                    """
+                    total_hours_result = run_query(total_hours_query, engine, db_pool)
+                    if not total_hours_result.empty and total_hours_result.iloc[0, 0] is not None:
+                        total_hours = float(total_hours_result.iloc[0, 0])
+            except Exception:
+                total_hours = 0
+        if total_hours is None:
+            total_hours = 0
+        # Team counts
+        total_team_members = project_data['employee_code'].nunique()
+        current_team_members = project_data[(project_data['allocation_status'] == 'Active') & (project_data['effective_to'].isna())]['employee_code'].nunique()
         overview_text = f"""
         <b>Project Name:</b> {proj_info.get('project_name', 'N/A')}<br/>
         <b>Project ID:</b> {proj_info.get('project_id', 'N/A')}<br/>
@@ -66,6 +91,10 @@ def create_project_document_report(project_data, project_info, weekly_hours_data
         <b>Status:</b> {proj_info.get('status', 'N/A')}<br/>
         <b>Start Date:</b> {proj_info.get('start_date', 'N/A')}<br/>
         <b>End Date:</b> {proj_info.get('end_date', 'N/A') if proj_info.get('end_date') else 'Ongoing'}<br/>
+        <b>Project Manager:</b> {manager_name}<br/>
+        <b>Total Hours:</b> {total_hours:.1f}<br/>
+        <b>Total Team Members:</b> {total_team_members}<br/>
+        <b>Current Team Members:</b> {current_team_members}<br/>
         """
         elements.append(Paragraph(overview_text, styles['Normal']))
         elements.append(Spacer(1, 16))
@@ -99,11 +128,30 @@ def create_project_document_report(project_data, project_info, weekly_hours_data
         ]['employee_code'].unique()
 
         # Helper to get total hours and task summaries for an employee
-        def get_emp_stats(emp_code):
-            emp_hours = weekly_hours_data[weekly_hours_data['employee_code'] == emp_code]
-            total_hours = emp_hours['hours_worked'].sum() if not emp_hours.empty else 0
-            # Task summaries: count unique task descriptions
-            task_summaries = emp_hours['task_description'].dropna().unique()
+        def get_emp_stats(emp_code, engine, db_pool):
+            # Get total hours for this employee in this project from timesheet
+            project_id = project_info.iloc[0]['project_id'] if not project_info.empty else None
+            total_hours = 0
+            if project_id:
+                try:
+                    emp_hours_query = f"""
+                    SELECT SUM(hours_worked) as total_hours
+                    FROM timesheet
+                    WHERE employee_code = '{emp_code}' AND project_id = '{project_id}'
+                    """
+                    emp_hours_result = run_query(emp_hours_query, engine, db_pool)
+                    if not emp_hours_result.empty and emp_hours_result.iloc[0, 0] is not None:
+                        total_hours = float(emp_hours_result.iloc[0, 0])
+                except Exception:
+                    total_hours = 0
+            # Fetch saved summary from task_summary table
+            saved_summary = get_employee_task_summary(emp_code, project_id, engine, db_pool) if project_id else None
+            if saved_summary:
+                task_summaries = [saved_summary]
+            else:
+                # Fallback to unique task descriptions from timesheet
+                emp_hours = weekly_hours_data[weekly_hours_data['employee_code'] == emp_code]
+                task_summaries = emp_hours['task_description'].dropna().unique()
             return total_hours, task_summaries
 
         # --- Current Employees ---
@@ -112,7 +160,7 @@ def create_project_document_report(project_data, project_info, weekly_hours_data
             for emp_code in current_employees:
                 emp_data = project_data[project_data['employee_code'] == emp_code]
                 emp_info = emp_data.iloc[0]
-                total_hours, task_summaries = get_emp_stats(emp_code)
+                total_hours, task_summaries = get_emp_stats(emp_code, engine, db_pool)
                 elements.append(Paragraph(f"{emp_info['employee_name']} ({emp_code})", subheading_style))
                 emp_details = f"""
                 <b>Designation:</b> {emp_info.get('designation_name', 'N/A')}<br/>
@@ -150,7 +198,7 @@ def create_project_document_report(project_data, project_info, weekly_hours_data
             for emp_code in past_employees:
                 emp_data = project_data[project_data['employee_code'] == emp_code]
                 emp_info = emp_data.iloc[0]
-                total_hours, task_summaries = get_emp_stats(emp_code)
+                total_hours, task_summaries = get_emp_stats(emp_code, engine, db_pool)
                 elements.append(Paragraph(f"{emp_info['employee_name']} ({emp_code})", subheading_style))
                 emp_details = f"""
                 <b>Designation:</b> {emp_info.get('designation_name', 'N/A')}<br/>
@@ -232,48 +280,6 @@ def create_project_document_report(project_data, project_info, weekly_hours_data
             
             elements.append(Spacer(1, 16))
     
-    # Project Statistics Section
-    if not project_data.empty:
-        elements.append(Paragraph("PROJECT STATISTICS", heading_style))
-        
-        # Calculate statistics on unique data
-        total_employees = project_data['employee_code'].nunique()
-        current_employees = project_data[project_data['allocation_status'] == 'Active']['employee_code'].nunique()
-        
-        # Calculate average allocation for active employees
-        active_allocations = project_data[project_data['allocation_status'] == 'Active']
-        if not active_allocations.empty:
-            # Get the latest allocation for each active employee to avoid duplicates
-            latest_allocations = active_allocations.sort_values('effective_from').groupby('employee_code').tail(1)
-            avg_allocation = latest_allocations['allocation_percentage'].mean()
-        else:
-            avg_allocation = 0
-        
-        stats_text = f"""
-        <b>Total Team Members (Ever):</b> {total_employees}<br/>
-        <b>Current Active Members:</b> {current_employees}<br/>
-        <b>Average Current Allocation:</b> {avg_allocation:.1f}%<br/>
-        """
-        
-        if not weekly_hours_data.empty:
-            total_hours = weekly_hours_data['hours_worked'].sum()
-            
-            # Calculate average weekly hours per employee
-            weekly_hours_data_copy = weekly_hours_data.copy()
-            weekly_hours_data_copy['work_date'] = pd.to_datetime(weekly_hours_data_copy['work_date'])
-            weekly_hours_data_copy['week'] = weekly_hours_data_copy['work_date'].dt.isocalendar().week
-            weekly_hours_data_copy['year'] = weekly_hours_data_copy['work_date'].dt.year
-            
-            weekly_totals = weekly_hours_data_copy.groupby(['employee_code', 'year', 'week'])['hours_worked'].sum()
-            avg_weekly_hours = weekly_totals.mean() if not weekly_totals.empty else 0
-            
-            stats_text += f"""
-            <b>Total Hours Logged:</b> {total_hours:.1f} hours<br/>
-            <b>Average Weekly Hours per Employee:</b> {avg_weekly_hours:.1f} hours<br/>
-            """
-        
-        elements.append(Paragraph(stats_text, styles['Normal']))
-        elements.append(Spacer(1, 16))
     
     # Summary Section
     elements.append(Paragraph("SUMMARY", heading_style))
@@ -335,9 +341,12 @@ def show_project_master_report(engine=None, db_pool=None):
                 
                 if not project_data.empty:
                     # Display project overview
-                    st.markdown("### Project Overview")
+                    st.markdown("<h5 style='margin-bottom:0.5em;'>Project Overview</h5>", unsafe_allow_html=True)
                     if not project_info.empty:
                         proj_info = project_info.iloc[0]
+                        # Fetch manager using primary_manager_id
+                        manager = get_project_manager(proj_info.get('project_id'), engine, db_pool)
+                        manager_name = manager['employee_name'] if manager else 'N/A'
                         col1, col2, col3 = st.columns(3)
                         with col1:
                             st.metric("Project Status", proj_info.get('status', 'N/A'))
@@ -350,9 +359,9 @@ def show_project_master_report(engine=None, db_pool=None):
                                 end = pd.to_datetime(proj_info['end_date'])
                                 duration = f"{(end - start).days} days"
                             st.metric("Duration", duration)
-                    
+                        st.markdown(f"**Project Manager:** {manager_name}")
                     # Team summary
-                    st.markdown("### 👥 Team Summary")
+                    st.markdown("<h5 style='margin-bottom:0.5em;'>👥 Team Summary</h5>", unsafe_allow_html=True)
                     col1, col2, col3, col4 = st.columns(4)
 
                     with col1:
@@ -440,9 +449,26 @@ def show_project_master_report(engine=None, db_pool=None):
                             ]
                             current_alloc_pct = current_allocation['allocation_percentage'].iloc[0] if not current_allocation.empty else 0
                             # Calculate total hours and task summaries
-                            emp_hours = weekly_hours_data[weekly_hours_data['employee_code'] == emp_code]
-                            total_hours = emp_hours['hours_worked'].sum() if not emp_hours.empty else 0
-                            task_summaries = emp_hours['task_description'].dropna().unique()
+                            # --- FIX: Always fetch total hours from timesheet for this employee/project ---
+                            total_hours = 0
+                            try:
+                                emp_hours_query = f"""
+                                SELECT SUM(hours_worked) as total_hours
+                                FROM timesheet
+                                WHERE employee_code = '{emp_code}' AND project_id = '{project_id}'
+                                """
+                                emp_hours_result = run_query(emp_hours_query, engine, db_pool)
+                                if not emp_hours_result.empty and emp_hours_result.iloc[0, 0] is not None:
+                                    total_hours = float(emp_hours_result.iloc[0, 0])
+                            except Exception:
+                                total_hours = 0
+                            # Fetch saved summary from task_summary table for UI
+                            saved_summary = get_employee_task_summary(emp_code, project_id, engine, db_pool) if 'get_employee_task_summary' in globals() else None
+                            if saved_summary:
+                                task_summaries = [saved_summary]
+                            else:
+                                emp_hours = weekly_hours_data[weekly_hours_data['employee_code'] == emp_code]
+                                task_summaries = emp_hours['task_description'].dropna().unique()
                             with st.expander(f"👤 {emp_info['employee_name']} ({emp_code}) - **{current_alloc_pct}% allocated**"):
                                 col1, col2 = st.columns([2, 1])
                                 with col1:
@@ -454,7 +480,8 @@ def show_project_master_report(engine=None, db_pool=None):
                                     - **Total Experience:** {emp_info.get('total_experience', 'N/A')} years
                                     - **Total Hours:** {total_hours:.1f}
                                     - **Task Summaries:** {', '.join(task_summaries) if len(task_summaries) else 'N/A'}
-                                    **Allocation History:**
+
+                                    - **Allocation History:**
                                     """)
                                     for _, allocation in emp_data.iterrows():
                                         duration_text = f"From {allocation['effective_from']}"
@@ -475,6 +502,7 @@ def show_project_master_report(engine=None, db_pool=None):
                                         st.markdown("")
                                 with col2:
                                     # Weekly hours for this employee
+                                    emp_hours = weekly_hours_data[weekly_hours_data['employee_code'] == emp_code]
                                     if not emp_hours.empty:
                                         st.markdown("**Recent Hours Summary:**")
                                         emp_hours['week'] = pd.to_datetime(emp_hours['work_date']).dt.isocalendar().week
@@ -501,12 +529,30 @@ def show_project_master_report(engine=None, db_pool=None):
                             total_days = 0
                             for _, allocation in emp_data.iterrows():
                                 if pd.notna(allocation['effective_to']):
-                                    days = (pd.to_datetime(allocation['effective_to']) - pd.to_datetime(allocation['effective_from'])).days
+                                    effective_to = pd.to_datetime(allocation['effective_to'])
+                                    effective_from = pd.to_datetime(allocation['effective_from'])
+                                    days = (effective_to - effective_from).days
                                     total_days += days
                             # Calculate total hours and task summaries
-                            emp_hours = weekly_hours_data[weekly_hours_data['employee_code'] == emp_code]
-                            total_hours = emp_hours['hours_worked'].sum() if not emp_hours.empty else 0
-                            task_summaries = emp_hours['task_description'].dropna().unique()
+                            # --- FIX: Always fetch total hours from timesheet for this employee/project ---
+                            total_hours = 0
+                            try:
+                                emp_hours_query = f"""
+                                SELECT SUM(hours_worked) as total_hours
+                                FROM timesheet
+                                WHERE employee_code = '{emp_code}' AND project_id = '{project_id}'
+                                """
+                                emp_hours_result = run_query(emp_hours_query, engine, db_pool)
+                                if not emp_hours_result.empty and emp_hours_result.iloc[0, 0] is not None:
+                                    total_hours = float(emp_hours_result.iloc[0, 0])
+                            except Exception:
+                                total_hours = 0
+                            saved_summary = get_employee_task_summary(emp_code, project_id, engine, db_pool) if 'get_employee_task_summary' in globals() else None
+                            if saved_summary:
+                                task_summaries = [saved_summary]
+                            else:
+                                emp_hours = weekly_hours_data[weekly_hours_data['employee_code'] == emp_code]
+                                task_summaries = emp_hours['task_description'].dropna().unique()
                             with st.expander(f"👤 {emp_info['employee_name']} ({emp_code}) - **Worked {total_days} days**"):
                                 col1, col2 = st.columns([2, 1])
                                 with col1:
@@ -522,8 +568,10 @@ def show_project_master_report(engine=None, db_pool=None):
                                     """)
                                     for _, allocation in emp_data.iterrows():
                                         if pd.notna(allocation['effective_to']):
+                                            effective_to = pd.to_datetime(allocation['effective_to'])
+                                            effective_from = pd.to_datetime(allocation['effective_from'])
                                             duration_text = f"From {allocation['effective_from']} to {allocation['effective_to']}"
-                                            days = (pd.to_datetime(allocation['effective_to']) - pd.to_datetime(allocation['effective_from'])).days
+                                            days = (effective_to - effective_from).days
                                             duration_text += f" ({days} days)"
                                             st.markdown(f"""
                                             **Period:** {duration_text}  
@@ -533,7 +581,7 @@ def show_project_master_report(engine=None, db_pool=None):
                                                 st.markdown(f"&nbsp;&nbsp;&nbsp;&nbsp;**Reason:** {allocation['change_reason']}")
                                             st.markdown("")
                                 with col2:
-                                    # Historical hours for this employee
+                                    emp_hours = weekly_hours_data[weekly_hours_data['employee_code'] == emp_code]
                                     if not emp_hours.empty:
                                         st.markdown("**Historical Hours:**")
                                         st.metric("Total Hours", f"{total_hours:.1f}h")
@@ -564,7 +612,8 @@ def show_project_master_report(engine=None, db_pool=None):
                             try:
                                 pdf_buffer = create_project_document_report(
                                     project_data, project_info, weekly_hours_data,
-                                    f"Project Master Report - {project_name}"
+                                    f"Project Master Report - {project_name}",
+                                    engine, db_pool
                                 )
                                 st.download_button(
                                     label=" Download PDF Report",
@@ -609,11 +658,15 @@ def show_project_master_report(engine=None, db_pool=None):
 def run_query(query, engine=None, db_pool=None):
     """Execute SQL query and return results as DataFrame"""
     try:
-        if engine:
+        if engine is not None:
             df = pd.read_sql(query, engine)
-        elif db_pool:
-            # Implement your pool connection logic here
-            df = pd.read_sql(query, db_pool)
+        elif db_pool is not None:
+            # Check for valid connection/engine type
+            if hasattr(db_pool, 'execute') or hasattr(db_pool, 'connect'):
+                df = pd.read_sql(query, db_pool)
+            else:
+                st.error(f"db_pool is not a valid SQLAlchemy connection or engine. Type: {type(db_pool)}. Value: {db_pool}")
+                return pd.DataFrame()
         else:
             # Return empty DataFrame if no connection
             return pd.DataFrame()
@@ -695,3 +748,38 @@ def get_project_hours_by_employee(project_id, engine=None, db_pool=None):
         total_hours DESC
     """
     return run_query(query, engine, db_pool)
+
+def get_employee_task_summary(employee_code, project_id, engine=None, db_pool=None):
+    """Fetch the saved task summary for an employee on a project from the task_summary table."""
+    query = f"""
+    SELECT summary_text
+    FROM task_summary
+    WHERE employee_code = '{employee_code}' AND project_id = '{project_id}' AND status = 'Active'
+    ORDER BY generated_at DESC
+    LIMIT 1
+    """
+    try:
+        df = run_query(query, engine, db_pool)
+        if not df.empty and 'summary_text' in df.columns:
+            return df.iloc[0]['summary_text']
+    except Exception as e:
+        st.error(f"Error fetching task summary: {str(e)}")
+    return None
+
+def get_project_manager(project_id, engine=None, db_pool=None):
+    """Fetch project manager from allocations (employee_type contains 'Manager' or 'Lead')."""
+    query = f"""
+    SELECT e.employee_code, e.employee_name, d.department_name, des.designation_name
+    FROM project_allocation pa
+    JOIN employee e ON pa.employee_code = e.employee_code
+    LEFT JOIN department d ON e.department_id = d.department_id
+    LEFT JOIN designation des ON e.designation_id = des.designation_id
+    WHERE pa.project_id = '{project_id}'
+      AND (LOWER(e.employee_type) LIKE '%manager%' OR LOWER(e.employee_type) LIKE '%lead%')
+    ORDER BY pa.effective_from DESC
+    LIMIT 1
+    """
+    df = run_query(query, engine, db_pool)
+    if not df.empty:
+        return df.iloc[0].to_dict()
+    return None

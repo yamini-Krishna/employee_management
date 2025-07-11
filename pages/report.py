@@ -342,84 +342,57 @@ def show_project_master_report(engine=None, db_pool=None):
                 if not project_data.empty:
                     # Display project overview
                     st.markdown("<h5 style='margin-bottom:0.5em;'>Project Overview</h5>", unsafe_allow_html=True)
+                    # Project Overview - Professional 3-column layout
                     if not project_info.empty:
                         proj_info = project_info.iloc[0]
-                        # Fetch manager using primary_manager_id
                         manager = get_project_manager(proj_info.get('project_id'), engine, db_pool)
                         manager_name = manager['employee_name'] if manager else 'N/A'
-                        col1, col2, col3 = st.columns(3)
-                        with col1:
-                            st.metric("Project Status", proj_info.get('status', 'N/A'))
-                        with col2:
-                            st.metric(" Client", proj_info.get('client_name', 'N/A'))
-                        with col3:
-                            duration = "Ongoing"
-                            if proj_info.get('start_date') and proj_info.get('end_date'):
-                                start = pd.to_datetime(proj_info['start_date'])
-                                end = pd.to_datetime(proj_info['end_date'])
-                                duration = f"{(end - start).days} days"
-                            st.metric("Duration", duration)
-                        st.markdown(f"**Project Manager:** {manager_name}")
-                    # Team summary
-                    st.markdown("<h5 style='margin-bottom:0.5em;'>👥 Team Summary</h5>", unsafe_allow_html=True)
-                    col1, col2, col3, col4 = st.columns(4)
-
-                    with col1:
-                        # Total employees who have ever worked on this project
+                        # Calculate team stats
                         total_members = project_data['employee_code'].nunique()
-                        st.metric("Total Members", total_members)
-
-                    with col2:
-                        # Current employees actively allocated to this project (based on effective dates)
                         current_date = pd.Timestamp.now().date()
                         current_members = project_data[
                             (project_data['effective_from'] <= current_date) &
                             ((project_data['effective_to'].isna()) | (project_data['effective_to'] >= current_date)) &
                             (project_data['allocation_status'] == 'Active')
                         ]['employee_code'].nunique()
-                        st.metric("Current Members", current_members)
-
-                    with col3:
-                        # Average allocation percentage for currently active members
-                        current_date = pd.Timestamp.now().date()
-                        active_allocations = project_data[
-                            (project_data['effective_from'] <= current_date) &
-                            ((project_data['effective_to'].isna()) | (project_data['effective_to'] >= current_date)) &
-                            (project_data['allocation_status'] == 'Active')
-                        ]
-                        if not active_allocations.empty:
-                            avg_allocation = active_allocations['allocation_percentage'].mean()
-                            st.metric("Avg Allocation", f"{avg_allocation:.1f}%")
-                        else:
-                            st.metric("Avg Allocation", "0.0%")
-
-                    with col4:
-                        # Total hours spent on this project from timesheet data
+                        # Total hours
+                        total_hours = 0
                         try:
-                            # Query to get total hours for the project
                             total_hours_query = f"""
                             SELECT ROUND(SUM(t.hours_worked)::numeric, 2) as total_hours
                             FROM timesheet t
                             WHERE t.project_id = '{project_id}'
                             """
-                            
                             total_hours_result = run_query(total_hours_query, engine, db_pool)
-                            
                             if not total_hours_result.empty and total_hours_result.iloc[0, 0] is not None:
                                 total_hours = total_hours_result.iloc[0, 0]
                                 if pd.isna(total_hours):
                                     total_hours = 0
-                                st.metric("Total Hours", f"{float(total_hours):.1f}h")
-                            else:
-                                st.metric("Total Hours", "0.0h")
-                                
-                        except Exception as e:
-                            st.metric("Total Hours", "N/A")
-                            st.error(f"Error fetching hours data: {str(e)}")
-               
-                    
-                    # Team composition with segregation
-                    st.markdown("###  Team Composition & History")
+                        except Exception:
+                            total_hours = 0
+                        # 3-column layout
+                        prof_col1, prof_col2, prof_col3 = st.columns(3)
+                        with prof_col1:
+                            st.markdown(f"""
+                            **Project Name:** {proj_info.get('project_name', 'N/A')}  
+                            **Project ID:** {proj_info.get('project_id', 'N/A')}  
+                            **Client:** {proj_info.get('client_name', 'N/A')}  
+                            **Status:** {proj_info.get('status', 'N/A')}
+                            """)
+                        with prof_col2:
+                            st.markdown(f"""
+                            **Start Date:** {proj_info.get('start_date', 'N/A')}  
+                            **End Date:** {proj_info.get('end_date', 'Ongoing') if proj_info.get('end_date') else 'Ongoing'}  
+                            **Project Manager:** {manager_name}
+                            """)
+                        with prof_col3:
+                            st.markdown(f"""
+                            **Total Hours:** {float(total_hours):.1f}  
+                            **Total Team Members:** {total_members}  
+                            **Current Team Members:** {current_members}
+                            """)
+
+
                     
                     # Separate current and past employees
                     current_employees = project_data[

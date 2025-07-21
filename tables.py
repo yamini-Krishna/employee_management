@@ -205,14 +205,35 @@ class DatabaseTableCreator:
             # EMPLOYEE_EXIT
             """
             CREATE TABLE IF NOT EXISTS employee_exit (
-                exit_id SERIAL PRIMARY KEY,
-                employee_code VARCHAR(20) UNIQUE NOT NULL REFERENCES employee(employee_code),
+                employee_code VARCHAR(20) PRIMARY KEY REFERENCES employee(employee_code),
                 exit_date DATE NOT NULL,
-                last_working_date DATE,
-                exit_reason VARCHAR(200),
+                last_working_date DATE NOT NULL,
+                exit_reason VARCHAR(100) NOT NULL,
                 exit_comments TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
+            """,
+
+            # WORK PROFILE
+            """
+            CREATE TABLE IF NOT EXISTS employee_work_profile (
+                employee_code VARCHAR(20) REFERENCES employee(employee_code),
+                role VARCHAR(100),
+                skills TEXT,
+                total_experience_years NUMERIC(5,2) DEFAULT 0,
+                relevant_experience_years NUMERIC(5,2) DEFAULT 0,
+                certifications TEXT,
+                past_projects TEXT,
+                primary_skills TEXT,
+                secondary_skills TEXT,
+                business_unit VARCHAR(100),
+                department VARCHAR(100),
+                office_location VARCHAR(100),
+                status VARCHAR(20) DEFAULT 'Active',
+                last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                CONSTRAINT pk_work_profile PRIMARY KEY (employee_code)
+            );
+            """,
             """,
 
             # CSV_UPLOAD_LOG

@@ -24,6 +24,7 @@ services:
 
   # Employee Manager Application
   app:
+    image: employee_manager_app:latest
     build: .
     container_name: employee_manager_app
     ports:

@@ -173,9 +173,9 @@ def render_authenticated_app():
     st.markdown("""
     <div style='display:flex; align-items:center; gap:1em;'>
         <img src='https://www.aganitha.ai/wp-content/uploads/2023/05/aganitha-logo.png' width='60'>
-        <h1 style='color:#1f4e79; margin-bottom:0;'>Aganitha HR Management System</h1>
+        <h1 style='color:#1f4e79; margin-bottom:0;'>Aganitha Employee Management System</h1>
     </div>
-    <p style='color:#4472c4; font-size:1.2em; margin-top:0;'>Welcome to the central hub for all your HR needs.</p>
+    <p style='color:#4472c4; font-size:1.2em; margin-top:0;'></p>
     <hr style='border:1px solid #1f4e79;'>
     """, unsafe_allow_html=True)
 
@@ -188,7 +188,7 @@ def render_authenticated_app():
         "🤖 Tasks Summariser",
         "📋 Standard Reports",
         "🎯 Allocations",
-        "🧾 Logs",
+        "⚙️ Settings"
     ])
     
     with tabs[0]:
@@ -212,8 +212,25 @@ def render_authenticated_app():
     with tabs[6]:
         render_allocations(engine)
 
+    #with tabs[7]:
+    #    render_activity_logs(engine)
+
+    # --- Settings Tab ---
     with tabs[7]:
-        render_activity_logs(engine)
+        settings_tabs = st.tabs(["Logs", "Clear DB"])
+        with settings_tabs[0]:
+            st.subheader("Application Logs")
+            render_activity_logs(engine)
+        with settings_tabs[1]:
+            st.subheader("Clear Database Tables")
+            st.warning("This will delete all data from the main tables but keep the table structure. This action cannot be undone.")
+            if st.button("Clear All Table Data", key="clear_db_btn"):
+                try:
+                    from clear_db import clear_tables
+                    clear_tables()
+                    st.success("All table data cleared successfully.")
+                except Exception as e:
+                    st.error(f"Error clearing tables: {e}")
 
 def main():
     """Main application entry point"""

@@ -120,22 +120,42 @@ def get_work_profile_report():
                 FROM timesheet t
                 WHERE t.work_date >= CURRENT_DATE - INTERVAL '30 days'
                 GROUP BY t.employee_code
+            ),
+            work_profile_summary AS (
+                SELECT 
+                    wp.employee_code,
+                    wp.role,
+                    wp.primary_skills,
+                    wp.secondary_skills,
+                    wp.total_experience_years,
+                    wp.relevant_experience_years,
+                    wp.certifications
+                FROM employee_work_profile wp
             )
             SELECT 
                 e.employee_code,
                 e.employee_name,
-                d.department_name,
-                des.designation_name,
-                e.employee_type,
+                e.department_name,
                 e.grade,
+                wp.role as current_role,
                 COALESCE(pc.total_projects, 0) as total_projects,
                 COALESCE(pc.active_projects, 0) as active_projects,
                 COALESCE(pc.total_allocation, 0) as total_allocation_percentage,
                 COALESCE(ts.total_hours_logged, 0) as hours_last_30_days,
                 COALESCE(ts.days_logged, 0) as days_logged_last_30_days,
                 COALESCE(ts.avg_daily_hours, 0) as avg_daily_hours,
-                e.total_experience,
+                COALESCE(wp.total_experience_years, 0) as total_experience_years,
+                COALESCE(wp.relevant_experience_years, 0) as relevant_experience_years,
+                wp.primary_skills,
+                wp.secondary_skills,
+                wp.certifications,
                 e.status
+            FROM employee e
+            LEFT JOIN work_profile_summary wp ON e.employee_code = wp.employee_code
+            LEFT JOIN project_counts pc ON e.employee_code = pc.employee_code
+            LEFT JOIN timesheet_summary ts ON e.employee_code = ts.employee_code
+            WHERE e.status = 'Active'
+            ORDER BY e.employee_name
             FROM employee e
             LEFT JOIN department d ON e.department_id = d.department_id
             LEFT JOIN designation des ON e.designation_id = des.designation_id

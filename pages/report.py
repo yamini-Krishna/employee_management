@@ -399,7 +399,8 @@ def show_project_master_report(engine=None, db_pool=None):
                             **Current Team Members:** {current_members}
                             """)
 
-
+                    # Team composition with segregation
+                    st.markdown("###  Team Composition & History")
                     
                     # Separate current and past employees
                     current_employees = project_data[
@@ -569,7 +570,6 @@ def show_project_master_report(engine=None, db_pool=None):
                                         st.metric("Avg Hours/Day", f"{avg_hours_per_day:.1f}h")
                                     else:
                                         st.markdown(" ")
-                    
                     # Hours analysis chart
                     if not weekly_hours_data.empty:
                         st.markdown("###  Hours Analysis")

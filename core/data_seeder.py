@@ -78,6 +78,11 @@ class DatabaseSeeder2:
             logger.warning(f"No data to insert into {table}")
             return
 
+        # Log the columns and first row of data for debugging
+        logger.info(f"Attempting to insert into {table} with columns: {columns}")
+        if data:
+            logger.info(f"First row data: {data[0]}")
+
         # Check existing constraints
         constraints = self.check_table_constraints(table)
         logger.info(f"Found constraints for {table}: {constraints}")
@@ -402,6 +407,67 @@ class DatabaseSeeder2:
             except Exception as e:
                 logger.warning(f"Failed to update experience for {self.get_safe_value(row, 'Employee Code')}: {e}")
 
+    def seed_work_profiles(self, df_work: pd.DataFrame):
+        """Seed employee work profile data"""
+        logger.info("Seeding work profiles...")
+
+        work_profile_data = []
+        for _, row in df_work.iterrows():
+            # Extract and process the data
+            designation = self.get_safe_value(row, 'Designation', 'Not Specified')
+            department = self.get_safe_value(row, 'Department', 'Not Specified')
+            business_unit = self.get_safe_value(row, 'Business Unit', 'Not Specified')
+
+            # Combine business unit, department and designation for skills categorization
+            primary_skills = f"{business_unit},{department}"
+            secondary_skills = designation
+
+            # For new employees, start with 0 years experience
+            # These will be updated through the experience update process
+            work_profile_data.append((
+                self.get_safe_value(row, 'Employee Code'),
+                designation,  # Use designation as role
+                f"{business_unit},{department},{designation}",  # Combined skills
+                0.0,  # Total experience - will be calculated
+                0.0,  # Relevant experience - will be calculated
+                '',  # Certifications - to be added later
+                '',  # Past projects - to be added later
+                primary_skills,
+                secondary_skills,
+                'Active'
+            ))
+
+            logger.info(f"Processing work profile for employee: {row['Employee Code']}")
+
+        self.bulk_insert_safe('employee_work_profile',
+                            ['employee_code', 'role', 'skills', 'total_experience_years',
+                             'relevant_experience_years', 'certifications', 'past_projects',
+                             'primary_skills', 'secondary_skills', 'status'],
+                            work_profile_data,
+                            primary_key_columns=['employee_code'])
+        
+        # Update employee table with initial experience as 0
+        # This can be updated later through the experience update process
+        for _, row in df_work.iterrows():
+            try:
+                update_query = """
+                    UPDATE employee 
+                    SET past_experience = %s,
+                        current_experience = %s,
+                        department_name = %s,
+                        business_unit = %s
+                    WHERE employee_code = %s
+                """
+                self.execute_query(update_query, (
+                    0.0,  # past_experience
+                    0.0,  # current_experience
+                    self.get_safe_value(row, 'Department', 'Not Specified'),
+                    self.get_safe_value(row, 'Business Unit', 'Not Specified'),
+                    row['Employee Code']
+                ))
+            except Exception as e:
+                logger.warning(f"Failed to update work profile for {row['Employee Code']}: {e}")
+
     def seed_employee_exits(self, df_exit: pd.DataFrame):
         """Seed employee exit data"""
         logger.info("Seeding employee exits...")
@@ -518,32 +584,98 @@ class DatabaseSeeder2:
                             timesheet_data,
                             primary_key_columns=['employee_code', 'project_id', 'work_date'])
 
-    def seed_project_allocations(self, df_allocations: pd.DataFrame):
+    def seed_project_allocations(self, df_allocations: pd.DataFrame, csv_files: Dict[str, str] = None):
         """Seed project allocation data"""
         logger.info("Seeding project allocations...")
 
+        # First ensure all projects exist
+        project_data = []
+        seen_projects = set()
+        for _, row in df_allocations.iterrows():
+            if row['Project Code'] not in seen_projects:
+                project_data.append((
+                    row['Project Code'],
+                    row['Project Name'],
+                    None,  # client_name
+                    'Active',  # status
+                    pd.to_datetime(row['Available From']).date(),  # start_date
+                    None,  # end_date
+                ))
+                seen_projects.add(row['Project Code'])
+        
+        # Insert projects
+        if project_data:
+            logger.info(f"Inserting {len(project_data)} projects")
+            self.bulk_insert_safe('project',
+                                ['project_id', 'project_name', 'client_name', 'status', 'start_date', 'end_date'],
+                                project_data,
+                                primary_key_columns=['project_id'])
+
+        # Get employee codes from employee master
+        try:
+            if csv_files and 'employee_master' in csv_files:
+                emp_df = pd.read_csv(csv_files['employee_master'])
+            else:
+                emp_df = pd.read_csv('updated_csv_files/employee_master.csv')  # fallback
+            employee_map = dict(zip(emp_df['Employee Name'], emp_df['Employee Code']))
+            logger.info(f"Loaded {len(employee_map)} employee mappings")
+        except Exception as e:
+            logger.error(f"Failed to read employee master data: {e}")
+            raise
+
+        # Now insert allocations
         allocation_data = []
         for _, row in df_allocations.iterrows():
             try:
+                emp_code = employee_map.get(row['Name'])
+                if not emp_code:
+                    logger.warning(f"Could not find employee code for {row['Name']}")
+                    continue
+
+                # Use the mapped employee code
                 allocation_data.append((
-                    row['employee_code'],
-                    row['project_id'],
-                    float(row['allocation_percentage']) if pd.notna(row['allocation_percentage']) else 100.0,
-                    pd.to_datetime(row['effective_from']).date(),
-                    pd.to_datetime(row['effective_to']).date() if pd.notna(row['effective_to']) else None,
-                    'Active',
-                    row['created_by'] if pd.notna(row['created_by']) else None,
-                    row['change_reason'] if pd.notna(row['change_reason']) else None
+                    emp_code,  # employee_code
+                    row['Project Code'],  # project_id
+                    float(row['% Allocation']) if pd.notna(row['% Allocation']) else 100.0,
+                    pd.to_datetime(row['Available From']).date(),
+                    None,  # effective_to
+                    'Active',  # status
+                    'system',  # created_by
+                    row['Comments'] if pd.notna(row['Comments']) else None
                 ))
             except Exception as e:
-                logger.warning(f"Failed to parse project allocation record: {e}")
+                logger.warning(f"Failed to parse project allocation record for employee={row.get('Name')} project_id={row.get('Project Code')}: {e}")
                 continue
 
-        self.bulk_insert_safe('project_allocation',
-                            ['employee_code', 'project_id', 'allocation_percentage',
-                             'effective_from', 'effective_to', 'status', 'created_by',
-                             'change_reason'],
-                            allocation_data)
+        if allocation_data:
+            try:
+                logger.info(f"Attempting to insert {len(allocation_data)} project allocations")
+                # Use the correct column names here!
+                self.bulk_insert_safe('project_allocation',
+                                    ['employee_code', 'project_id', 'allocation_percentage',
+                                     'effective_from', 'effective_to', 'status', 'created_by',
+                                     'change_reason'],
+                                    allocation_data)
+            except Exception as e:
+                logger.error(f"Bulk insert failed for project allocations: {e}")
+                logger.info("Attempting individual inserts...")
+                success_count = 0
+                for record in allocation_data:
+                    try:
+                        self.cursor.execute(
+                            """
+                            INSERT INTO project_allocation 
+                            (employee_code, project_id, allocation_percentage, effective_from, 
+                             effective_to, status, created_by, change_reason) 
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                            """,
+                            record
+                        )
+                        self.conn.commit()
+                        success_count += 1
+                    except Exception as ex:
+                        logger.error(f"Failed to insert allocation for employee_code={record[0]}, project_id={record[1]}: {ex}")
+                logger.info(f"Individual inserts completed: {success_count} successful out of {len(allocation_data)}")
 
     def seed_database(self, csv_files: Dict[str, str], clean_existing: bool = False,
                  tables_to_clean: List[str] = None):
@@ -554,22 +686,23 @@ class DatabaseSeeder2:
             if clean_existing:
                 self.clean_existing_data(tables_to_clean)
 
-            # First seed departments and designations from employee master
+            # Load employee master first if available
+            df_emp = None
             if 'employee_master' in csv_files and csv_files['employee_master'] is not None:
                 df_emp = csv_files['employee_master']
                 if isinstance(df_emp, str):  # If it's a file path
                     logger.info(f"Reading employee_master from file: {df_emp}")
                     df_emp = pd.read_csv(df_emp)
                 logger.info(f"Processing {len(df_emp)} employee records")
+                
+                # First seed departments and designations
                 self.seed_departments_and_designations(df_emp)
-
-            # Get reference mappings
-            dept_mapping, desig_mapping = self.get_reference_mappings()
-            logger.info(f"Found {len(dept_mapping)} departments and {len(desig_mapping)} designations")
-
-            # Then seed employees
-            if 'employee_master' in csv_files and csv_files['employee_master'] is not None:
-                logger.info("Seeding employee data...")
+                
+                # Get reference mappings
+                dept_mapping, desig_mapping = self.get_reference_mappings()
+                logger.info(f"Found {len(dept_mapping)} departments and {len(desig_mapping)} designations")
+                
+                # Then seed employees
                 self.seed_employees(df_emp, dept_mapping, desig_mapping)
 
             # Update work profiles
@@ -579,7 +712,7 @@ class DatabaseSeeder2:
                     logger.info(f"Reading work_profile from file: {df_work}")
                     df_work = pd.read_csv(df_work)
                 logger.info(f"Processing {len(df_work)} work profiles")
-                self.seed_work_profiles(df_work, dept_mapping, desig_mapping)
+                self.seed_work_profiles(df_work)
 
             # Update experience data
             if 'experience_report' in csv_files and csv_files['experience_report'] is not None:
@@ -615,7 +748,7 @@ class DatabaseSeeder2:
                     logger.info(f"Reading project_allocations from file: {df_allocations}")
                     df_allocations = pd.read_csv(df_allocations)
                 logger.info(f"Processing {len(df_allocations)} allocation records")
-                self.seed_project_allocations(df_allocations)
+                self.seed_project_allocations(df_allocations, csv_files)
 
             # Seed resource utilization
             if 'resource_utilization' in csv_files and csv_files['resource_utilization'] is not None:
@@ -675,25 +808,24 @@ class DatabaseSeeder2:
                             primary_key_columns=['project_id', 'week_start_date'])
 
 def main():
-    # Database configuration
+    # Database configuration from docker-compose
     db_config = {
         'host': 'localhost',
-        'port': '5433',
-        'database': 'epms_db',
+        'port': '5434',
+        'database': 'employee_db',
         'user': 'postgres',
-        'password': 'whatonearth'
+        'password': 'postgres123'
     }
 
-    # CSV files mapping
+    # CSV files mapping with actual filenames
     csv_files = {
-        'employee_master': 'employee_master.csv',
-        'employee_exit': 'employee_exit_report.csv',
-        'experience_report': 'experience_report.csv',
-        'work_profile': 'employee_work_profile.csv',
-        'attendance_report': 'attendance_report_daily.csv',
-        'timesheet_report': 'timesheet_report_clean.csv',
-        'project_allocations': 'project_allocations.csv',
-        'resource_utilization': 'resource_utilization.csv'  # Add the new file
+        'employee_master': 'updated_csv_files/employee_master.csv',
+        'employee_exit': 'updated_csv_files/exit-report.csv',
+        'experience_report': 'updated_csv_files/experience_report.csv',
+        'work_profile': 'updated_csv_files/employee_work_profile.csv',
+        'attendance_report': 'updated_csv_files/attendance-report.csv',
+        'timesheet_report': 'updated_csv_files/timesheets.csv',
+        'project_allocations': 'updated_csv_files/allocations.csv'
     }
 
     # Verify CSV files exist

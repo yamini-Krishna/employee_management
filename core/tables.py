@@ -159,7 +159,7 @@ class DatabaseTableCreator:
                 effective_from DATE NOT NULL,
                 effective_to DATE,
                 status VARCHAR(20) DEFAULT 'Active',
-                created_by VARCHAR(20) REFERENCES employee(employee_code),
+                created_by VARCHAR(20),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 change_reason TEXT,
                 CONSTRAINT chk_effective_dates CHECK (effective_to IS NULL OR effective_to >= effective_from)
@@ -383,7 +383,7 @@ class DatabaseTableCreator:
             """
             CREATE TABLE IF NOT EXISTS project_allocation (
                 allocation_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                employee_code VARCHAR(20) NOT NULL REFERENCES employee(employee_code),
+                employee_name VARCHAR(200) NOT NULL REFERENCES employee(employee_name),
                 project_id VARCHAR(50) NOT NULL REFERENCES project(project_id),
                 allocation_percentage DECIMAL(5,2) CHECK (allocation_percentage >= 0 AND allocation_percentage <= 100),
                 effective_from DATE NOT NULL,

@@ -266,7 +266,8 @@ def display_save_changes_section(engine, employee_code, logger):
                             datetime.now().date(),  # Effective from today
                             None,  # No end date for bulk changes
                             change_reason.strip(),
-                            logger
+                            logger,
+                            None  # Keep existing role for bulk changes
                         )
                         if not success:
                             all_success = False
@@ -296,7 +297,7 @@ def display_save_changes_section(engine, employee_code, logger):
         st.info("No pending changes to save")
 
 
-def update_allocation(engine, old_allocation_id, employee_code, new_percentage, new_status, new_effective_from, new_effective_to, change_reason, logger):
+def update_allocation(engine, old_allocation_id, employee_code, new_percentage, new_status, new_effective_from, new_effective_to, change_reason, logger, new_role=None):
     """Update allocation by creating new record and deactivating old one"""
     try:
         with engine.connect() as conn:
@@ -306,7 +307,7 @@ def update_allocation(engine, old_allocation_id, employee_code, new_percentage, 
             try:
                 # Get current allocation details
                 result = conn.execute(text("""
-                    SELECT project_id, effective_from, effective_to, allocation_percentage
+                    SELECT project_id, effective_from, effective_to, allocation_percentage, role
                     FROM project_allocation
                     WHERE allocation_id = :allocation_id
                 """), {"allocation_id": old_allocation_id})
@@ -316,8 +317,8 @@ def update_allocation(engine, old_allocation_id, employee_code, new_percentage, 
                     st.error("Allocation not found")
                     return False
 
-                project_id, effective_from, effective_to, old_percentage = allocation_data
-
+                project_id, effective_from, effective_to, old_percentage, current_role = allocation_data
+                
                 # Get a valid created_by employee code
                 created_by = get_valid_created_by(engine)
                 if not created_by:
@@ -332,15 +333,17 @@ def update_allocation(engine, old_allocation_id, employee_code, new_percentage, 
                 """), {"allocation_id": old_allocation_id})
 
                 # Insert new allocation record
+                role_to_use = new_role if new_role is not None else current_role
                 conn.execute(text("""
                     INSERT INTO project_allocation 
-                    (employee_code, project_id, allocation_percentage, effective_from, 
+                    (employee_code, project_id, role, allocation_percentage, effective_from, 
                      effective_to, status, created_by, change_reason, created_at)
-                    VALUES (:employee_code, :project_id, :allocation_percentage, :effective_from, 
+                    VALUES (:employee_code, :project_id, :role, :allocation_percentage, :effective_from, 
                             :effective_to, :status, :created_by, :change_reason, :created_at)
                 """), {
                     "employee_code": employee_code,
                     "project_id": project_id,
+                    "role": role_to_use,
                     "allocation_percentage": new_percentage,
                     "effective_from": new_effective_from,
                     "effective_to": new_effective_to,
@@ -357,12 +360,16 @@ def update_allocation(engine, old_allocation_id, employee_code, new_percentage, 
                 logger.log_event(
                     event_type="ALLOCATION_UPDATE",
                     description=f"Updated allocation for {employee_code} on project {project_id}",
-                    user=st.session_state.get('user', created_by),
+                    user=st.session_state.get('username', created_by),
                     details={
                         "employee_code": employee_code,
                         "project_id": project_id,
                         "old_percentage": float(old_percentage),
                         "new_percentage": new_percentage,
+                        "user_full_name": st.session_state.get('user_full_name', 'Unknown'),
+                        "timestamp": str(datetime.now()),
+                        "old_role": current_role,
+                        "new_role": role_to_use,
                         "change_reason": change_reason
                     }
                 )
@@ -380,8 +387,13 @@ def update_allocation(engine, old_allocation_id, employee_code, new_percentage, 
         logger.log_event(
             event_type="ALLOCATION_UPDATE_ERROR",
             description=f"Failed to update allocation: {str(e)}",
-            user=st.session_state.get('user', 'system'),
-            details={"error": str(e), "allocation_id": old_allocation_id}
+            user=st.session_state.get('username', 'system'),
+            details={
+                "error": str(e), 
+                "allocation_id": old_allocation_id,
+                "user_full_name": st.session_state.get('user_full_name', 'Unknown'),
+                "timestamp": str(datetime.now())
+            }
         )
 
         return False
@@ -749,6 +761,7 @@ def render_manage_allocations(engine, logger):
             e.employee_code,
             e.employee_name,
             d.department_name,
+            pa.role,
             pa.allocation_percentage,
             pa.effective_from,
             pa.effective_to,
@@ -763,11 +776,12 @@ def render_manage_allocations(engine, logger):
         
         if not allocations_df.empty:
             st.dataframe(
-                allocations_df[['employee_name', 'department_name', 'allocation_percentage', 'effective_from', 'effective_to', 'status']],
+                allocations_df[['employee_name', 'department_name', 'role', 'allocation_percentage', 'effective_from', 'effective_to', 'status']],
                 hide_index=True,
                 column_config={
                     "employee_name": "Employee Name",
                     "department_name": "Department",
+                    "role": "Role",
                     "allocation_percentage": "Allocation %",
                     "effective_from": "Start Date",
                     "effective_to": "End Date",
@@ -800,6 +814,11 @@ def render_manage_allocations(engine, logger):
                             value=float(current['allocation_percentage']),
                             key="edit_percentage"
                         )
+                        new_role = st.text_input(
+                            "Role in Project",
+                            value=current['role'] if pd.notna(current['role']) else "",
+                            key="edit_role"
+                        )
                         new_status = st.selectbox(
                             "Status", 
                             ['Active', 'Inactive'],
@@ -822,7 +841,7 @@ def render_manage_allocations(engine, logger):
                             value=current_to,
                             min_value=new_effective_from,
                             key="edit_to_date"
-                        ) if new_status == 'Active' else current_from
+                        )
                     
                     change_reason = st.text_area("Reason for Change")
                     
@@ -840,7 +859,8 @@ def render_manage_allocations(engine, logger):
                                     new_effective_from,
                                     new_effective_to,
                                     change_reason,
-                                    logger
+                                    logger,
+                                    new_role
                                 )
                                 if success:
                                     # Log the activity
@@ -851,12 +871,11 @@ def render_manage_allocations(engine, logger):
                                         details={
                                             'allocation_id': allocation_id,
                                             'project_id': project_id,
-                                            'employee_code': current['employee_code'],
-                                            'old_percentage': float(current['allocation_percentage']),
-                                            'new_percentage': float(new_percentage),
-                                            'old_status': current['status'],
-                                            'new_status': new_status,
-                                            'change_reason': change_reason
+                                            'employee_code': current['employee_code'],                                        'old_percentage': float(current['allocation_percentage']),
+                                        'new_percentage': float(new_percentage),
+                                        'old_status': current['status'],
+                                        'new_status': new_status,
+                                        'change_reason': change_reason
                                         }
                                     )
                                     st.success("Allocation updated successfully!")
@@ -892,11 +911,13 @@ def render_manage_allocations(engine, logger):
                 )
                 
                 allocation_percentage = st.number_input("Allocation Percentage", min_value=0, max_value=100, value=100)
-                role = st.text_input("Role in Project", placeholder="e.g., Developer, Tech Lead, etc.")
+                role_in_project = st.text_input("Role in Project", placeholder="e.g., Developer, Designer, QA Engineer")
                 effective_from = st.date_input("Effective From", min_value=date.today())
                 effective_to = st.date_input("Effective To", min_value=effective_from)
                 
-                if st.form_submit_button("Add Team Member"):
+                submit_clicked = st.form_submit_button("Add Team Member")
+                
+                if submit_clicked:
                     try:
                         with engine.connect() as conn:
                             # Start transaction
@@ -911,19 +932,20 @@ def render_manage_allocations(engine, logger):
                                 # Insert new allocation
                                 conn.execute(text("""
                                     INSERT INTO project_allocation 
-                                    (employee_code, project_id, allocation_percentage, effective_from, 
+                                    (employee_code, project_id, role, allocation_percentage, effective_from, 
                                      effective_to, status, created_by, change_reason, created_at)
-                                    VALUES (:employee_code, :project_id, :allocation_percentage, :effective_from, 
+                                    VALUES (:employee_code, :project_id, :role, :allocation_percentage, :effective_from, 
                                             :effective_to, :status, :created_by, :change_reason, :created_at)
                                 """), {
                                     "employee_code": selected_employee,
                                     "project_id": project_id,
+                                    "role": role_in_project,
                                     "allocation_percentage": allocation_percentage,
                                     "effective_from": effective_from,
                                     "effective_to": effective_to,
                                     "status": "Active",
                                     "created_by": created_by,
-                                    "change_reason": f"Role: {role}",
+                                    "change_reason": f"Initial allocation with role: {role_in_project}",
                                     "created_at": datetime.now()
                                 })
                                 
@@ -937,8 +959,7 @@ def render_manage_allocations(engine, logger):
                                     details={
                                         'project_id': project_id,
                                         'employee_code': selected_employee,
-                                        'allocation_percentage': allocation_percentage,
-                                        'role': role
+                                        'allocation_percentage': allocation_percentage
                                     }
                                 )
                                 
@@ -953,3 +974,5 @@ def render_manage_allocations(engine, logger):
                         st.error(f"Error adding team member: {str(e)}")
             else:
                 st.info("No available employees to add to this project.")
+                # Add a disabled submit button to satisfy Streamlit's form requirements
+                st.form_submit_button("Add Team Member", disabled=True)

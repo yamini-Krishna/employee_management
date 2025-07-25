@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 from pathlib import Path
 from core.etl import ETLPipeline
 from config.config import etl_config, app_config
@@ -59,8 +60,12 @@ def render_file_upload(db_pool):
                 logger.log_file_upload(
                     filename=uploaded_file.name,
                     file_type=file_type,
-                    user=st.session_state.get('user', 'anonymous'),
-                    status="SUCCESS"
+                    user=st.session_state.get('username', 'anonymous'),
+                    status="SUCCESS",
+                    details={
+                        "user_full_name": st.session_state.get('user_full_name', 'Unknown'),
+                        "upload_time": str(datetime.now())
+                    }
                 )
             else:
                 unrecognized_files.append(uploaded_file.name)
@@ -68,8 +73,13 @@ def render_file_upload(db_pool):
                 logger.log_event(
                     event_type="FILE_UPLOAD",
                     description=f"Unrecognized file: {uploaded_file.name}",
-                    user=st.session_state.get('user', 'anonymous'),
-                    details={"status": "FAILED", "reason": "Unrecognized file type"}
+                    user=st.session_state.get('username', 'anonymous'),
+                    details={
+                        "status": "FAILED", 
+                        "reason": "Unrecognized file type",
+                        "user_full_name": st.session_state.get('user_full_name', 'Unknown'),
+                        "upload_time": str(datetime.now())
+                    }
                 )
 
         # Show simple status message
@@ -94,7 +104,7 @@ def render_file_upload(db_pool):
                                 records_processed=stats.get('records_processed', 0),
                                 records_success=stats.get('records_success', 0),
                                 records_failed=stats.get('validation_errors', {}).get(file_type, 0),
-                                user=st.session_state.get('user', 'anonymous')
+                                user=st.session_state.get('username', 'anonymous')
                             )
 
                         # Show simple results

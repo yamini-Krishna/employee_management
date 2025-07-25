@@ -48,6 +48,17 @@ Thumbs.db
 # Local environment files
 .env
 .env.local
+
+# Data directory (exclude to avoid permission issues)
+data/
+
+# Data directories - exclude to prevent permission issues during build
+data/
+postgres_data/
+
+# Data directory (to avoid permission issues)
+data/
+data/**
 .env.*.local
 
 # Logs

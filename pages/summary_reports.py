@@ -156,13 +156,6 @@ def get_work_profile_report():
             LEFT JOIN timesheet_summary ts ON e.employee_code = ts.employee_code
             WHERE e.status = 'Active'
             ORDER BY e.employee_name
-            FROM employee e
-            LEFT JOIN department d ON e.department_id = d.department_id
-            LEFT JOIN designation des ON e.designation_id = des.designation_id
-            LEFT JOIN project_counts pc ON e.employee_code = pc.employee_code
-            LEFT JOIN timesheet_summary ts ON e.employee_code = ts.employee_code
-            WHERE e.status = 'Active'
-            ORDER BY e.employee_name
             """
             cursor.execute(query)
             results = cursor.fetchall()

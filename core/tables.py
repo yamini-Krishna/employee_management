@@ -136,6 +136,21 @@ class DatabaseTableCreator:
             );
             """,
 
+            # EMPLOYEE_WORK_PROFILE
+            """
+            CREATE TABLE IF NOT EXISTS employee_work_profile (
+                employee_code VARCHAR(20) PRIMARY KEY REFERENCES employee(employee_code) ON DELETE CASCADE,
+                role VARCHAR(100),
+                primary_skills TEXT[],
+                secondary_skills TEXT[],
+                total_experience_years DECIMAL(5,2),
+                relevant_experience_years DECIMAL(5,2),
+                certifications TEXT[],
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            """,
+
             # PROJECT
             """
             CREATE TABLE IF NOT EXISTS project (
@@ -145,6 +160,7 @@ class DatabaseTableCreator:
                 status VARCHAR(20) DEFAULT 'Active',
                 start_date DATE,
                 end_date DATE,
+                manager_id VARCHAR(20) REFERENCES employee(employee_code),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             """,
@@ -366,6 +382,21 @@ class DatabaseTableCreator:
             );
             """,
 
+            # EMPLOYEE_WORK_PROFILE table before PROJECT table
+            """
+            CREATE TABLE IF NOT EXISTS employee_work_profile (
+                employee_code VARCHAR(20) PRIMARY KEY REFERENCES employee(employee_code) ON DELETE CASCADE,
+                role VARCHAR(100),
+                primary_skills TEXT[],
+                secondary_skills TEXT[],
+                total_experience_years DECIMAL(5,2),
+                relevant_experience_years DECIMAL(5,2),
+                certifications TEXT[],
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            """,
+
             # PROJECT
             """
             CREATE TABLE IF NOT EXISTS project (
@@ -375,6 +406,7 @@ class DatabaseTableCreator:
                 status VARCHAR(20) DEFAULT 'Active',
                 start_date DATE,
                 end_date DATE,
+                manager_id VARCHAR(20) REFERENCES employee(employee_code),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             """,
@@ -501,7 +533,7 @@ class DatabaseTableCreator:
         queries = self.get_table_creation_queries()
         table_names = [
             'department', 'designation', 'employee', 'employee_personal',
-            'employee_financial', 'project', 'project_allocation', 'timesheet',
+            'employee_financial', 'employee_work_profile', 'project', 'project_allocation', 'timesheet',
             'attendance', 'employee_exit', 'csv_upload_log', 'data_validation_errors',
             'task_summary', 'task_summary_history'
             # 'resource_utilization'  # keep commented if table is commented out

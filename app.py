@@ -21,6 +21,7 @@ from pages.report import render_standard_reports
 from logs.activity_log_view import render_activity_logs
 from logs.activity_logger import get_logger
 from pages.allocations import render_allocations
+from pages.backup import render_backup_page
 from auth.auth import AuthManager
 
 # Load environment variables
@@ -217,11 +218,13 @@ def render_authenticated_app():
 
     # --- Settings Tab ---
     with tabs[7]:
-        settings_tabs = st.tabs(["Logs", "Clear DB"])
+        settings_tabs = st.tabs(["Logs", "Backup", "Clear DB"])
         with settings_tabs[0]:
             st.subheader("Application Logs")
             render_activity_logs(engine)
         with settings_tabs[1]:
+            render_backup_page()
+        with settings_tabs[2]:
             st.subheader("Clear Database Tables")
             st.warning("This will delete all data from the main tables but keep the table structure. This action cannot be undone.")
             if st.button("Clear All Table Data", key="clear_db_btn"):

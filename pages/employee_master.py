@@ -25,32 +25,8 @@ def show_employee_master_report(engine=None, db_pool=None):
     if 'project_data' not in st.session_state:
         st.session_state.project_data = None
     
-    # Sidebar filters
-    st.sidebar.header("🔍 Filter Options")
-    
-    # Employee Status Filter
-    status_filter = st.sidebar.selectbox(
-        "Employee Status",
-        ["All", "Active", "Inactive"],
-        index=1  # Default to Active
-    )
-    
-    # Department Filter
-    departments = get_departments(engine, db_pool)
-    dept_filter = st.sidebar.selectbox(
-        "Department",
-        ["All"] + departments
-    )
-    
-    # Business Unit Filter
-    business_units = get_business_units(engine, db_pool)
-    bu_filter = st.sidebar.selectbox(
-        "Business Unit", 
-        ["All"] + business_units
-    )
-    
-    # Load employee data based on filters
-    employees_df = load_employee_data(engine, db_pool, status_filter, dept_filter, bu_filter)
+    # Load employee data - show all active employees by default
+    employees_df = load_employee_data(engine, db_pool, "Active", "All", "All")
     
     if employees_df.empty:
         st.warning("No employees found matching the selected criteria.")

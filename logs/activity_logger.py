@@ -1,4 +1,3 @@
-
 """
 Activity Logger Module for HR Management System
 
@@ -7,7 +6,7 @@ It uses SQLAlchemy for database interactions and follows enterprise-level design
 """
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Union, Any
 from sqlalchemy import (
     create_engine, MetaData, Table, Column, Integer, String, 
@@ -334,7 +333,94 @@ class ActivityLogger:
                 "event_counts": {},
                 "daily_counts": {}
             }
+    
+    def purge_old_logs(self, days_to_keep: int = 30) -> int:
+        """
+        Delete logs older than the specified number of days
+        
+        Args:
+            days_to_keep: Number of days of logs to keep (default: 30)
+            
+        Returns:
+            int: Number of logs deleted
+        """
+        try:
+            if self.Session is None:
+                logger.error("Cannot purge logs: Session is not initialized")
+                return 0
+                
+            cutoff_date = datetime.now() - timedelta(days=days_to_keep)
+            
+            with self.Session() as session:
+                # Find logs older than the cutoff date
+                deleted_count = session.query(SystemLog).filter(
+                    SystemLog.timestamp < cutoff_date
+                ).delete()
+                
+                session.commit()
+                logger.info(f"Purged {deleted_count} logs older than {days_to_keep} days")
+                return deleted_count
+                
+        except Exception as e:
+            logger.error(f"Error purging old logs: {e}")
+            return 0
 
+    def log_allocation_change(self, employee_id: str, project_id: str, 
+                             allocation_details: Dict[str, Any], 
+                             user: Optional[str] = None, 
+                             action: str = "UPDATED") -> bool:
+        """
+        Log a project allocation change event
+        
+        Args:
+            employee_id: ID of the employee
+            project_id: ID of the project
+            allocation_details: Details of the allocation change
+            user: Username who made the change
+            action: Type of action (ADDED, UPDATED, REMOVED)
+            
+        Returns:
+            bool: True if logging was successful, False otherwise
+        """
+        description = f"Project allocation {action}: Employee {employee_id} on Project {project_id}"
+        details = {
+            "employee_id": employee_id,
+            "project_id": project_id,
+            "action": action,
+            "allocation_details": allocation_details,
+            "changed_by": user
+        }
+        return self.log_event("ALLOCATION_CHANGE", description, user, details)
+        
+    def log_project_change(self, project_id: str, project_name: str,
+                          user: Optional[str] = None, 
+                          action: str = "ADDED",
+                          project_details: Optional[Dict[str, Any]] = None) -> bool:
+        """
+        Log a project change event (add, update, delete)
+        
+        Args:
+            project_id: ID of the project
+            project_name: Name of the project
+            user: Username who made the change
+            action: Type of action (ADDED, UPDATED, DELETED)
+            project_details: Additional details about the project
+            
+        Returns:
+            bool: True if logging was successful, False otherwise
+        """
+        description = f"Project {action}: {project_name} (ID: {project_id})"
+        details = {
+            "project_id": project_id,
+            "project_name": project_name,
+            "action": action,
+            "changed_by": user
+        }
+        
+        if project_details:
+            details["project_details"] = project_details
+            
+        return self.log_event("PROJECT_CHANGE", description, user, details)
 
 # Create a singleton instance
 _activity_logger = None

@@ -747,7 +747,20 @@ def get_employee_task_summary(employee_code, project_id, engine=None, db_pool=No
     return None
 
 def get_project_manager(project_id, engine=None, db_pool=None):
-    """Fetch project manager from allocations (employee_type contains 'Manager' or 'Lead')."""
+    """Fetch project manager from the project table's manager_id field."""
+    query = f"""
+    SELECT e.employee_code, e.employee_name, d.department_name, des.designation_name
+    FROM project p
+    JOIN employee e ON p.manager_id = e.employee_code
+    LEFT JOIN department d ON e.department_id = d.department_id
+    LEFT JOIN designation des ON e.designation_id = des.designation_id
+    WHERE p.project_id = '{project_id}'
+    """
+    df = run_query(query, engine, db_pool)
+    if not df.empty:
+        return df.iloc[0].to_dict()
+    
+    # Fallback to the old method if manager_id is not set
     query = f"""
     SELECT e.employee_code, e.employee_name, d.department_name, des.designation_name
     FROM project_allocation pa
